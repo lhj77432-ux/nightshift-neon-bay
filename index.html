@@ -88,6 +88,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 #screen-menu .pill{min-height:30px;padding:5px 10px;font-size:9px}
 @media(max-width:1000px) and (orientation:landscape){#screen-menu{padding:10px 13px}.ms-brand span{display:none}.ms-res{gap:10px}.ms-res b{font-size:12px}.ms-main{grid-template-columns:minmax(0,1.3fr) minmax(230px,.7fr);padding:5px 0}.ms-left h1{font-size:clamp(30px,4.5vw,48px);margin:4px 0 5px}.ms-left h1 span{font-size:8px;margin-top:5px}.ms-sub{display:none}.mode-list{gap:7px}.mode-card{min-height:88px;padding:9px}.mc-icon{width:28px;height:28px;margin-bottom:5px}.mc-icon svg{width:18px;height:18px}.mode-card b{font-size:15px}.mode-card small{font-size:7px;margin-top:3px}.mode-card em{font-size:7px;margin-top:4px}.ms-detail{padding:10px 12px}.ms-mode-icon{width:36px;height:36px;margin:8px 0 6px}.ms-mode-icon svg{width:24px;height:24px}.ms-detail h2{font-size:26px}.ms-detail p{font-size:10px;line-height:1.4;margin:5px 0 7px;min-height:0}.ms-meta{margin-bottom:8px}.ms-meta span{font-size:7px;padding:3px 5px}.ms-start{min-height:44px;font-size:13px;padding:0 12px}.ms-start b{font-size:19px}.ms-garage{min-height:31px;margin-top:5px;font-size:9px}.ms-ride{margin-top:8px;padding-top:6px}.ms-ride b{font-size:12px}.ms-foot-label{display:none}}
 @media(orientation:portrait){#screen-menu.active{overflow:auto;padding:12px}.ms-brand span{display:none}.ms-brand strong{font-size:20px}.ms-top{flex:0 0 auto}.ms-main{display:block;padding:13px 0}.ms-left h1{font-size:42px}.ms-sub{display:none}.mode-list{grid-template-columns:1fr;gap:7px;margin-bottom:12px}.mode-card{min-height:66px;display:grid;grid-template-columns:32px 1fr;grid-template-rows:auto auto}.mc-icon{grid-row:1/3;margin:0 8px 0 0;width:30px;height:30px}.mode-card b{font-size:17px}.mode-card small{font-size:7px}.mode-card em{display:none}.mc-index{top:8px;right:9px}.ms-detail{padding:14px}.ms-mode-icon{width:38px;height:38px;margin:6px 0}.ms-detail h2{font-size:30px}.ms-detail p{font-size:10px;min-height:0}.ms-footer{margin-top:8px}.ms-foot-label{display:none}}
+.ms-track-label{font-size:8px;letter-spacing:.18em;color:#73839c;margin:0 0 6px}
+.track-picker{display:flex;gap:7px;margin:0 0 12px}
+.track-chip{flex:1;min-height:44px;padding:5px 8px;text-align:left;border:1px solid rgba(255,255,255,.14);background:rgba(8,14,25,.72);pointer-events:auto;transition:.16s;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}.track-chip b{display:block;font-size:11px;color:#dce8f7}.track-chip small{display:block;font-size:7px;letter-spacing:.14em;color:#7588a2;margin-top:2px}.track-chip.selected{border-color:var(--mode);background:color-mix(in srgb,var(--mode) 13%,rgba(7,13,23,.9));box-shadow:inset 0 0 16px color-mix(in srgb,var(--mode) 9%,transparent)}.track-chip.selected small{color:var(--mode)}
+@media(max-width:1000px) and (orientation:landscape){.ms-track-label{font-size:6px;margin-bottom:2px}.track-picker{gap:5px;margin-bottom:5px}.track-chip{min-height:44px;padding:4px 5px}.track-chip b{font-size:9px}.track-chip small{font-size:6px;margin-top:0}.ms-detail .ms-meta{margin-bottom:4px}.ms-ride{display:none}.ms-detail p{margin-bottom:5px}.ms-mode-icon{margin:5px 0}.ms-garage{min-height:34px}}
 </style>
 </head>
 <body>
@@ -130,6 +134,11 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
       <h2 id="msModeTitle">环湾竞速</h2>
       <p id="msModeDesc">与三台 AI 同场竞速，漂移攒氮，冲线定胜负。</p>
       <div id="msModeMeta" class="ms-meta"><span>2 LAPS</span><span>4 CARS</span><span> 2:30</span></div>
+      <div class="ms-track-label">TRACK / 地图</div>
+      <div class="track-picker">
+        <button class="track-chip selected" data-map="neon"><b>霓虹湾</b><small>NEON BAY</small></button>
+        <button class="track-chip" data-map="port"><b>铁潮港</b><small>IRON TIDE</small></button>
+      </div>
       <button class="ms-start" data-action="start-mode"><span>开始比赛</span><b></b></button>
       <button class="ms-garage" data-action="garage">车库与调校 / GARAGE</button>
       <div class="ms-ride"><small>CURRENT RIDE</small><b id="menuCar"></b></div>
@@ -173,9 +182,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261021l" defer></script>
+<script src="./game.js?v=20261021m" defer></script>
 </body>
 </html>
+
 
 
 
