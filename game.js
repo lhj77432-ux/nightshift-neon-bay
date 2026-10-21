@@ -606,7 +606,43 @@ class Game{
  constructor(){this.profile=loadProfile();this.canvas=$('#game');this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:!matchMedia('(pointer:coarse)').matches,powerPreference:'high-performance'});this.renderer.shadowMap.enabled=false;this.renderer.setSize(innerWidth,innerHeight);this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));if('outputColorSpace'in this.renderer)this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.08;this.renderer.setClearColor(0x02030a,1);this.scene=new THREE.Scene();this.scene.fog=new THREE.FogExp2(0x0a0c1b,.00165);this.camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.08,900);this.scene.add(this.camera);this.input=new InputHub();this.sound=new Sound();this.track=new Track(this.scene);this.world=new World(this.scene,this.track,this.renderer);this.smoke=new Smoke(this.scene);this.boostSmoke=new Smoke(this.scene,0xff6a2e,.3,1.0);this.skidMarks=new SkidMarks(this.scene);this.sparks=new Sparks(this.scene);this.speedLines=new SpeedLines(this.camera);this.cameraRig=new CameraRig(this.camera);this.race=new Race(this);this.preview=null;this.state='menu';this.paused=false;this.showroomTime=0;this.highBeam=false;this.clock=new THREE.Clock();this.perfTime=0;this.perfFrames=0;this.mapClock=0;this.dpr=1;this.dprCap=1;this.lastMode='circuit';this.sound.setEnabled(this.profile.settings.sound);this.bindUI();this.bindResize();this.bindOrientation();this.applyQuality(true);this.updateSettingsUI();this.showMenu();this.animate();requestAnimationFrame(()=>{const b=$('#boot');b.classList.add('done');setTimeout(()=>b.style.display='none',520);});}
  bindUI(){document.addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;this.sound.unlock();if(btn.dataset.race){this.startRace(btn.dataset.race);return;}if(btn.dataset.car!==undefined){this.profile.selectedCar=Number(btn.dataset.car);saveProfile(this.profile);this.replacePreview();this.renderGarage();this.sound.ui();return;}if(btn.dataset.upgrade){this.buyUpgrade(btn.dataset.upgrade);return;}if(btn.dataset.setting){this.toggleSetting(btn.dataset.setting);return;}const a=btn.dataset.action;if(!a)return;if(a==='garage')this.openGarage();else if(a==='menu')this.showMenu();else if(a==='pause')this.togglePause();else if(a==='resume')this.togglePause();else if(a==='camera')this.toggleCamera();else if(a==='beam')this.toggleBeam();else if(a==='retry')this.startRace(this.race.mode||this.lastMode);});this.canvas.addEventListener('pointerdown',()=>this.sound.unlock());}
  bindResize(){window.addEventListener('resize',()=>{this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();this.renderer.setSize(innerWidth,innerHeight,false);this.applyQuality(false);});}
- bindOrientation(){const update=()=>{const p=innerHeight>innerWidth&&matchMedia('(pointer:coarse)').matches;$('#portrait').style.display=p?'flex':'none';};window.addEventListener('resize',update);window.addEventListener('orientationchange',()=>setTimeout(update,200));update();}
+ bindOrientation(){
+    const el=$('#portrait');
+    let raf=0;
+    const isLandscape=()=>{
+      const w=window.innerWidth||document.documentElement.clientWidth||0;
+      const h=window.innerHeight||document.documentElement.clientHeight||0;
+      if(w>0&&h>0)return w>=h;
+      let byType=false;
+      try{byType=!!(window.screen&&screen.orientation&&/landscape/i.test(screen.orientation.type||''));}catch(e){}
+      return byType;
+    };
+    const apply=()=>{
+      cancelAnimationFrame(raf);
+      raf=requestAnimationFrame(()=>{
+        const landscape=isLandscape();
+        if(landscape){
+          el.classList.remove('show');el.style.display='none';el.style.pointerEvents='none';el.setAttribute('aria-hidden','true');
+          document.documentElement.style.setProperty('--game-vh',window.innerHeight+'px');
+          if(this.input)this.input.resetTouch();
+        }else{
+          el.classList.add('show');el.style.display='flex';el.style.pointerEvents='auto';el.setAttribute('aria-hidden','false');
+          document.documentElement.style.setProperty('--game-vh',window.innerHeight+'px');
+          if(this.input)this.input.resetTouch();
+        }
+      });
+    };
+    apply();
+    window.addEventListener('resize',apply,{passive:true});
+    window.addEventListener('orientationchange',()=>{apply();requestAnimationFrame(apply);setTimeout(apply,120);setTimeout(apply,350);},{passive:true});
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',apply,{passive:true});
+      window.visualViewport.addEventListener('scroll',apply,{passive:true});
+    }
+    if(window.screen&&screen.orientation&&screen.orientation.addEventListener)screen.orientation.addEventListener('change',apply);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)apply();});
+    if(window.ResizeObserver)new ResizeObserver(apply).observe(document.documentElement);
+  }
  applyQuality(force){const q=this.profile.settings.quality,coarse=matchMedia('(pointer:coarse)').matches;this.dprCap=q==='low'?.85:q==='high'?2:(coarse?1.15:1.5);this.dprCap=Math.min(this.dprCap,devicePixelRatio||1);if(force)this.dpr=this.dprCap;this.dpr=clamp(this.dpr,.65,this.dprCap);this.renderer.setPixelRatio(this.dpr);this.renderer.setSize(innerWidth,innerHeight,false);this.world.setQuality(q);}
  toggleSetting(k){const s=this.profile.settings;if(k==='night'){s.night=!s.night;this.world.setNight(s.night);}else if(k==='rain'){s.rain=!s.rain;this.world.setRain(s.rain);}else if(k==='sound'){s.sound=!s.sound;this.sound.setEnabled(s.sound);}else if(k==='quality'){s.quality=s.quality==='auto'?'high':s.quality==='high'?'low':'auto';this.applyQuality(true);}saveProfile(this.profile);this.updateSettingsUI();this.sound.ui();}
  updateSettingsUI(){const s=this.profile.settings;$('#setNight').textContent='昼夜  '+(s.night?'夜':'昼');$('#setRain').textContent='雨  '+(s.rain?'开':'关');$('#setSound').textContent='音效  '+(s.sound?'开':'关');$('#setQuality').textContent='画质  '+(s.quality==='auto'?'自动':s.quality==='high'?'高':'低');}
