@@ -235,7 +235,7 @@ class CarController{
     this.def=def;this.stats=statsFor(def,upgrades);
     if(opts.skill){this.stats.topSpeed*=opts.skill;this.stats.accel*=opts.skill;}
     this.model=makeCar(def);if(opts.headlight)addHeadlight(this.model);scene.add(this.model);
-    this.scene=scene;this.isAI=!!opts.isAI;this.laneOffset=opts.laneOffset||0;
+    this.scene=scene;this.isAI=!!opts.isAI;this.laneOffset=opts.laneOffset||0;if(this.isAI)this.model.userData.exhaustLight.visible=false;
     this.pos=new THREE.Vector3();this.velocity=new THREE.Vector3();this.forward=new THREE.Vector3(0,0,1);this.right=new THREE.Vector3(-1,0,0);
     this.yaw=0;this.pitch=0;this.roll=0;this.steer=0;this.vy=0;this.airborne=false;this.speedKmh=0;this.rpm=.1;this.gear=1;
     this.nitro=this.stats.nitroMax;this.boosting=false;this.boostVfx=0;this.brakeInput=false;
