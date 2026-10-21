@@ -2,19 +2,19 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#05060c">
 <title>NIGHTSHIFT / 霓虹湾</title>
 <style>
 :root{--acid:#d6ff3f;--cyan:#39f4ff;--pink:#ff2f88;--text:#f4f7ff;--panel:rgba(7,10,20,.76);--line:rgba(255,255,255,.14)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#05060c;color:var(--text);font-family:"Arial Narrow","Bahnschrift","Microsoft YaHei",system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
-#game{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;background:#05060c;color:var(--text);font-family:"Arial Narrow","Bahnschrift","Microsoft YaHei",system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none}
 #vignette{position:fixed;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 42%,rgba(0,0,0,.58) 100%);mix-blend-mode:multiply}
 #ui{position:fixed;inset:0;pointer-events:none;z-index:10}
 .screen{position:absolute;inset:0;display:none;pointer-events:none}.screen.active{display:block}
 #screen-garage.active,#screen-pause.active,#screen-results.active{pointer-events:auto}
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}button:focus-visible{outline:2px solid var(--acid);outline-offset:3px}button:disabled{opacity:.38;cursor:not-allowed}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:none;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:2px solid var(--acid);outline-offset:3px}button:disabled{opacity:.38;cursor:not-allowed}
 #screen-menu{background:linear-gradient(90deg,rgba(3,5,12,.97) 0%,rgba(3,5,12,.82) 34%,rgba(3,5,12,.18) 64%,transparent 82%)}
 .menu-wrap{position:absolute;inset:0;padding:clamp(20px,4vw,64px);display:flex;overflow:auto}.menu-copy{width:min(720px,56vw);margin-top:auto;margin-bottom:auto;pointer-events:auto}
 .eyebrow,.kicker{font-size:11px;letter-spacing:.26em;color:var(--acid);font-weight:800;text-transform:uppercase}
@@ -113,8 +113,9 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}button
 <div id="portrait"><b>请旋转至横屏</b><span>ROTATE TO LANDSCAPE / 横屏操控优先</span></div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261021e" defer></script>
+<script src="./game.js?v=20261021f" defer></script>
 </body>
 </html>
+
 
 
