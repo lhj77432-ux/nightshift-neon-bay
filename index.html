@@ -68,38 +68,81 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
   .steer-group{gap:10px}.steer-btn{width:52px;height:52px;font-size:20px}
   .power-group{gap:6px}.tbtn{min-width:48px;min-height:48px}#btnNitro{width:50px;height:50px}#btnBrake{width:50px;height:50px}#btnGas{width:58px;height:58px}
 }
+#screen-menu{--mode:#39f4ff;background:linear-gradient(100deg,rgba(3,6,14,.95) 0%,rgba(4,8,17,.76) 42%,rgba(4,8,17,.28) 72%,rgba(4,8,17,.08) 100%);backdrop-filter:saturate(1.08)}
+#screen-menu.active{display:flex;flex-direction:column;padding:clamp(12px,2vw,26px)}
+.ms-top{display:flex;justify-content:space-between;align-items:center;gap:14px;pointer-events:auto;flex:0 0 auto}
+.ms-brand{display:flex;align-items:baseline;gap:12px}.ms-brand strong{font-size:clamp(20px,2.3vw,30px);font-style:italic;letter-spacing:-.04em}.ms-brand strong:first-letter{color:var(--acid)}.ms-brand span{font-size:9px;letter-spacing:.22em;color:#72829d}
+.ms-res{display:flex;gap:16px}.ms-res div{text-align:right}.ms-res small,.ms-ride small{display:block;font-size:8px;letter-spacing:.18em;color:#7b8ca7}.ms-res b{font-size:15px;color:#f1f7ff}.ms-res div:first-child b{color:var(--acid)}
+.ms-main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.72fr);gap:clamp(10px,1.8vw,22px);align-items:center;flex:1 1 auto;min-height:0;padding:clamp(8px,1.5vh,18px) 0}
+.ms-left{pointer-events:auto;min-width:0}.ms-left h1{font-size:clamp(36px,5vw,76px);line-height:.84;margin:8px 0 10px;font-style:italic;letter-spacing:-.07em;text-shadow:0 0 42px rgba(57,244,255,.18)}.ms-left h1 span{display:block;font-size:clamp(10px,1.1vw,15px);line-height:1.2;letter-spacing:.25em;color:var(--mode);margin-top:10px}.ms-sub{font-size:clamp(10px,1.05vw,14px);color:#8e9db7;line-height:1.55;max-width:520px;margin:0 0 14px}
+.mode-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mode-card{position:relative;min-height:clamp(108px,16vh,158px);padding:14px 13px;text-align:left;border:1px solid rgba(255,255,255,.14);background:linear-gradient(145deg,rgba(12,19,34,.86),rgba(5,9,18,.78));clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%);pointer-events:auto;transition:transform .18s,border-color .18s,background .18s,box-shadow .18s;overflow:hidden}
+.mode-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--card,#39f4ff);opacity:.55}.mode-card:after{content:"";position:absolute;right:-28px;top:-20px;width:100px;height:100px;border:1px solid var(--card,#39f4ff);transform:rotate(35deg);opacity:.16}.mode-card:hover{transform:translateY(-4px);border-color:var(--card,#39f4ff)}.mode-card.selected{transform:translateY(-5px);border-color:var(--card,#39f4ff);background:linear-gradient(145deg,rgba(18,40,55,.94),rgba(7,13,25,.9));box-shadow:0 0 28px color-mix(in srgb,var(--card,#39f4ff) 24%,transparent),inset 0 0 26px rgba(255,255,255,.03)}.mode-card.selected:before{opacity:1;box-shadow:0 0 16px var(--card,#39f4ff)}
+.mc-index{position:absolute;right:11px;top:9px;font-size:10px;letter-spacing:.16em;color:#6f819f}.mc-check{position:absolute;right:11px;bottom:10px;font-size:15px;color:var(--card);opacity:0}.mode-card.selected .mc-check{opacity:1}.mc-icon{display:flex;align-items:center;justify-content:center;width:38px;height:38px;margin-bottom:10px;border:1px solid color-mix(in srgb,var(--card,#39f4ff) 48%,transparent);background:color-mix(in srgb,var(--card,#39f4ff) 10%,transparent);color:var(--card,#39f4ff)}.mc-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.mode-card b{display:block;font-size:clamp(16px,1.7vw,23px);font-style:italic;letter-spacing:-.02em}.mode-card small{display:block;font-size:8px;letter-spacing:.16em;color:#8593ab;margin-top:6px}.mode-card em{display:block;margin-top:8px;font-size:9px;letter-spacing:.18em;color:var(--card,#39f4ff);font-style:normal}
+.mode-card[data-mode="circuit"]{--card:#39f4ff}.mode-card[data-mode="time"]{--card:#d6ff3f}.mode-card[data-mode="drift"]{--card:#ff3f9a}
+.ms-detail{pointer-events:auto;align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:clamp(14px,2vw,24px);border:1px solid rgba(255,255,255,.16);background:linear-gradient(160deg,rgba(9,19,34,.9),rgba(5,8,16,.7));backdrop-filter:blur(16px);clip-path:polygon(0 0,100% 0,100% calc(100% - 26px),calc(100% - 26px) 100%,0 100%);box-shadow:inset 0 0 55px color-mix(in srgb,var(--mode) 7%,transparent)}
+.ms-detail-top{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.18em;color:#7f90aa}.ms-live{display:flex;align-items:center;gap:6px;color:var(--acid)}.ms-live i{width:6px;height:6px;border-radius:50%;background:var(--acid);box-shadow:0 0 10px var(--acid)}
+.ms-mode-icon{width:58px;height:58px;margin:18px 0 12px;display:flex;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--mode) 60%,transparent);background:color-mix(in srgb,var(--mode) 12%,transparent);color:var(--mode)}.ms-mode-icon svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
+.ms-detail h2{font-size:clamp(28px,3.3vw,45px);line-height:.9;margin:0;font-style:italic;letter-spacing:-.05em}.ms-detail p{font-size:12px;line-height:1.6;color:#93a3bb;margin:10px 0 14px;min-height:2.8em}.ms-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:17px}.ms-meta span{font-size:9px;letter-spacing:.12em;color:#b8c8dc;border:1px solid rgba(255,255,255,.14);padding:5px 8px;background:rgba(255,255,255,.035)}.ms-start{display:flex;align-items:center;justify-content:space-between;min-height:58px;padding:0 18px;background:var(--mode);color:#071016;border:0;pointer-events:auto;font-weight:1000;font-size:16px;letter-spacing:.06em;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);box-shadow:0 0 28px color-mix(in srgb,var(--mode) 24%,transparent)}.ms-start b{font-size:25px}.ms-start:hover{filter:brightness(1.12);transform:translateY(-2px)}.ms-garage{min-height:42px;margin-top:8px;border:1px solid rgba(255,255,255,.18);background:rgba(11,18,31,.7);color:#c6d4e7;pointer-events:auto;font-size:11px;letter-spacing:.1em}.ms-garage:hover{border-color:var(--mode);color:#fff}.ms-ride{margin-top:16px;padding-top:11px;border-top:1px solid rgba(255,255,255,.1)}.ms-ride b{display:block;margin-top:2px;font-size:15px;font-style:italic;color:#fff}
+.ms-footer{display:flex;align-items:center;gap:7px;flex-wrap:wrap;flex:0 0 auto;pointer-events:auto}.ms-foot-label{font-size:8px;letter-spacing:.2em;color:#687a95;margin-right:3px}
+#screen-menu .pill{min-height:30px;padding:5px 10px;font-size:9px}
+@media(max-width:1000px) and (orientation:landscape){#screen-menu{padding:10px 13px}.ms-brand span{display:none}.ms-res{gap:10px}.ms-res b{font-size:12px}.ms-main{grid-template-columns:minmax(0,1.3fr) minmax(230px,.7fr);padding:5px 0}.ms-left h1{font-size:clamp(30px,4.5vw,48px);margin:4px 0 5px}.ms-left h1 span{font-size:8px;margin-top:5px}.ms-sub{display:none}.mode-list{gap:7px}.mode-card{min-height:88px;padding:9px}.mc-icon{width:28px;height:28px;margin-bottom:5px}.mc-icon svg{width:18px;height:18px}.mode-card b{font-size:15px}.mode-card small{font-size:7px;margin-top:3px}.mode-card em{font-size:7px;margin-top:4px}.ms-detail{padding:10px 12px}.ms-mode-icon{width:36px;height:36px;margin:8px 0 6px}.ms-mode-icon svg{width:24px;height:24px}.ms-detail h2{font-size:26px}.ms-detail p{font-size:10px;line-height:1.4;margin:5px 0 7px;min-height:0}.ms-meta{margin-bottom:8px}.ms-meta span{font-size:7px;padding:3px 5px}.ms-start{min-height:44px;font-size:13px;padding:0 12px}.ms-start b{font-size:19px}.ms-garage{min-height:31px;margin-top:5px;font-size:9px}.ms-ride{margin-top:8px;padding-top:6px}.ms-ride b{font-size:12px}.ms-foot-label{display:none}}
+@media(orientation:portrait){#screen-menu.active{overflow:auto;padding:12px}.ms-brand span{display:none}.ms-brand strong{font-size:20px}.ms-top{flex:0 0 auto}.ms-main{display:block;padding:13px 0}.ms-left h1{font-size:42px}.ms-sub{display:none}.mode-list{grid-template-columns:1fr;gap:7px;margin-bottom:12px}.mode-card{min-height:66px;display:grid;grid-template-columns:32px 1fr;grid-template-rows:auto auto}.mc-icon{grid-row:1/3;margin:0 8px 0 0;width:30px;height:30px}.mode-card b{font-size:17px}.mode-card small{font-size:7px}.mode-card em{display:none}.mc-index{top:8px;right:9px}.ms-detail{padding:14px}.ms-mode-icon{width:38px;height:38px;margin:6px 0}.ms-detail h2{font-size:30px}.ms-detail p{font-size:10px;min-height:0}.ms-footer{margin-top:8px}.ms-foot-label{display:none}}
 </style>
 </head>
 <body>
 <canvas id="game"></canvas><div id="vignette"></div><div id="grade"></div>
 <div id="ui">
-<section id="screen-menu" class="screen active"><div class="menu-wrap">
-  <div class="menu-copy">
-    <div class="eyebrow">ORIGINAL ARCADE RACER / 2026</div>
-    <div class="logo">NIGHT<span>SHIFT</span></div>
-    <div class="subtitle"><b>霓虹湾</b> / NEON BAY</div>
-    <p class="sell">一台车，一整座霓虹城。漂移攒氮、擦墙过弯、三分钟一局。今晚，湾岸没有第二名。</p>
-    <div class="main-actions">
-      <button class="primary" data-race="circuit"><b>环湾竞速</b><span>2 LAPS / 4 CARS</span></button>
-      <button data-race="time"><b>极速计时</b><span>1 LAP / SOLO</span></button>
-      <button data-race="drift"><b>漂移试炼</b><span>90 SEC / CHAIN</span></button>
-      <button data-action="garage"><b>车库与调校</b><span>3 CARS / 9 UPGRADES</span></button>
+<section id="screen-menu" class="screen active">
+  <header class="ms-top">
+    <div class="ms-brand"><strong>NIGHTSHIFT</strong><span>NEON BAY / RACE CONTROL</span></div>
+    <div class="ms-res">
+      <div><small>CREDITS</small><b id="menuCredits">0 CR</b></div>
+      <div><small>BEST</small><b id="menuBest">--:--.---</b></div>
     </div>
+  </header>
+  <div class="ms-main">
+    <div class="ms-left">
+      <div class="eyebrow">NIGHT HARBOR / EVENT SELECT</div>
+      <h1>选择赛事 <span>SELECT EVENT</span></h1>
+      <p class="ms-sub">选择你的跑法。每场赛事都直接进入同一座霓虹湾，只改变规则与节奏。</p>
+      <div class="mode-list">
+        <button class="mode-card selected" data-mode="circuit">
+          <span class="mc-index">01</span><span class="mc-check"></span>
+          <span class="mc-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5h8l-2 3 2 3H4"/><path d="M8 19c4-1 2-8 7-7s2 5 5 4 2-4 2-7"/><path d="M13 6h7"/></svg></span>
+          <b>环湾竞速</b><small>2 LAPS  4 CARS</small><em>GRAND PRIX</em>
+        </button>
+        <button class="mode-card" data-mode="time">
+          <span class="mc-index">02</span><span class="mc-check"></span>
+          <span class="mc-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 13V8M9 3h6M12 3v3"/><path d="M18 5l2 2"/></svg></span>
+          <b>极速计时</b><small>1 LAP  SOLO</small><em>TIME ATTACK</em>
+        </button>
+        <button class="mode-card" data-mode="drift">
+          <span class="mc-index">03</span><span class="mc-check"></span>
+          <span class="mc-icon"><svg viewBox="0 0 24 24"><path d="M3 17c4 0 4-6 8-6s3 5 7 5 3-3 3-3"/><path d="M4 20c4 0 6-3 10-3 2 0 3 1 5 2"/><path d="M15 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/></svg></span>
+          <b>漂移试炼</b><small>90 SEC  CHAIN</small><em>DRIFT TRIAL</em>
+        </button>
+      </div>
+    </div>
+    <aside class="ms-detail">
+      <div class="ms-detail-top"><span id="msModeKicker">GRAND PRIX / 01</span><span class="ms-live"><i></i>READY</span></div>
+      <div id="msModeIcon" class="ms-mode-icon"></div>
+      <h2 id="msModeTitle">环湾竞速</h2>
+      <p id="msModeDesc">与三台 AI 同场竞速，漂移攒氮，冲线定胜负。</p>
+      <div id="msModeMeta" class="ms-meta"><span>2 LAPS</span><span>4 CARS</span><span> 2:30</span></div>
+      <button class="ms-start" data-action="start-mode"><span>开始比赛</span><b></b></button>
+      <button class="ms-garage" data-action="garage">车库与调校 / GARAGE</button>
+      <div class="ms-ride"><small>CURRENT RIDE</small><b id="menuCar"></b></div>
+    </aside>
   </div>
-  <aside class="menu-side"><div class="side-card">
-    <div class="row"><span>CURRENT RIDE</span><b id="menuCar"></b></div>
-    <div class="row"><span>CREDITS</span><b id="menuCredits">0 CR</b></div>
-    <div class="row"><span>BEST</span><b id="menuBest">--:--.---</b></div>
-    <div class="row"><span>MAP</span><b>霓虹湾 / 1.1 KM</b></div>
-  </div></aside>
-  <div class="settings">
+  <footer class="ms-footer">
+    <span class="ms-foot-label">DISPLAY / AUDIO</span>
     <button class="pill" id="setNight" data-setting="night">昼夜  夜</button>
     <button class="pill" id="setRain" data-setting="rain">雨  开</button>
     <button class="pill" id="setSound" data-setting="sound">音效  开</button>
     <button class="pill" id="setQuality" data-setting="quality">画质  自动</button>
-    
-  </div>
-</div></section>
+  </footer>
+</section>
 
 <section id="screen-garage" class="screen"><div class="garage-wrap">
   <header class="garage-head"><div><div class="kicker">NIGHTSHIFT PERFORMANCE DIVISION</div><h2>GARAGE / 车库</h2></div><div class="credits">AVAILABLE CREDITS<b id="garageCredits">0</b></div></header>
@@ -130,9 +173,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261021j" defer></script>
+<script src="./game.js?v=20261021k" defer></script>
 </body>
 </html>
+
 
 
 
