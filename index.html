@@ -11,6 +11,7 @@
 html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;background:#05060c;color:var(--text);font-family:"Arial Narrow","Bahnschrift","Microsoft YaHei",system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none}
 #vignette{position:fixed;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 42%,rgba(0,0,0,.58) 100%);mix-blend-mode:multiply}
+#grade{position:fixed;inset:0;z-index:6;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(ellipse at 18% 70%,rgba(0,220,255,.07),transparent 36%),radial-gradient(ellipse at 84% 28%,rgba(255,30,150,.065),transparent 42%),linear-gradient(180deg,rgba(5,0,20,.05),transparent 45%,rgba(0,24,40,.08))}
 #ui{position:fixed;inset:0;pointer-events:none;z-index:10}
 .screen{position:absolute;inset:0;display:none;pointer-events:none}.screen.active{display:block}
 #screen-garage.active,#screen-pause.active,#screen-results.active{pointer-events:auto}
@@ -50,10 +51,11 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 #portrait{display:none;position:fixed;inset:0;z-index:150;background:#05060c;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px;gap:12px;pointer-events:none}#portrait.show{display:flex;pointer-events:auto}#portrait b{font-size:24px;color:var(--acid);font-style:italic}#portrait span{color:#7e8ba4;font-size:12px;letter-spacing:.12em}
 @media(max-width:860px){.menu-copy{width:100%;max-width:520px}.logo{font-size:clamp(60px,16vw,104px)}.menu-side{position:static;width:100%;max-width:520px;margin-top:22px}.menu-wrap{display:block;padding-bottom:92px}.settings{bottom:12px}.garage-grid{grid-template-columns:1fr}.car-cards{grid-template-columns:1fr;gap:8px}.car-card{min-height:112px;display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center}.car-swatch{display:none}.car-card p{margin-top:2px}.tune-panel{position:static}.hud-top{left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 10px)}.hud-card{padding:8px 10px;min-width:96px}.bigline{font-size:17px}.center-hud{padding:5px 10px}#hudTimer{font-size:18px}.map-card{width:106px;height:106px}.mini-actions button{min-width:44px;min-height:36px;font-size:9px}.hud-speed{right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 132px)}.speed-line b{font-size:58px}.nitro-track{width:82px}.rpm{width:70px}.controls-hint{display:none}.toast{font-size:10px;top:14%}.drift-hud{bottom:27%}.mobile-cam{display:block}.modal,.result-card{padding:22px;max-height:calc(100% - 24px);overflow:auto}.result-stat b{font-size:15px}}
 @media(max-height:520px){.settings{display:none}.menu-copy{margin:0}.sell{display:none}.logo{font-size:70px}.main-actions{max-width:560px}.main-actions button{min-height:48px}.menu-side{display:none}}
+@media(min-width:861px){#game{filter:saturate(1.08) contrast(1.035)}}
 </style>
 </head>
 <body>
-<canvas id="game"></canvas><div id="vignette"></div>
+<canvas id="game"></canvas><div id="vignette"></div><div id="grade"></div>
 <div id="ui">
 <section id="screen-menu" class="screen active"><div class="menu-wrap">
   <div class="menu-copy">
@@ -113,9 +115,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 <div id="portrait"><b>请旋转至横屏</b><span>ROTATE TO LANDSCAPE / 横屏操控优先</span></div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261021g" defer></script>
+<script src="./game.js?v=20261021h" defer></script>
 </body>
 </html>
+
 
 
 
