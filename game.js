@@ -227,7 +227,13 @@ class Track{
  }
  rampHeightAtProgress(progress){const center=this.rampCenter/this.N;let d=Math.abs(progress-center);d=Math.min(d,1-d);const span=this.rampHalf/this.N;if(d>=span)return 0;return Math.cos((d/span)*Math.PI*.5)*1.9;}
  nearest(x,z){let bestD=Infinity,bestI=0,bestT=0;for(let i=0;i<this.N;i++){const a=this.samples[i].p,b=this.samples[(i+1)%this.N].p,abx=b.x-a.x,abz=b.z-a.z,den=abx*abx+abz*abz||1;let t=((x-a.x)*abx+(z-a.z)*abz)/den;t=clamp(t,0,1);const px=a.x+abx*t,pz=a.z+abz*t,dx=x-px,dz=z-pz,d=dx*dx+dz*dz;if(d<bestD){bestD=d;bestI=i;bestT=t;}}const a=this.samples[bestI],b=this.samples[(bestI+1)%this.N],p=new THREE.Vector3().lerpVectors(a.p,b.p,bestT),tangent=new THREE.Vector3().lerpVectors(a.t,b.t,bestT).normalize(),side=new THREE.Vector3().crossVectors(UP,tangent).normalize(),lateral=(x-p.x)*side.x+(z-p.z)*side.z;return{index:bestI,t:bestT,p,tangent,side,lateral,distance:Math.sqrt(bestD),progress:(bestI+bestT)/this.N};}
- addRibbon(offA,offB,hA,hB,mat,colorFn){const pos=[],norm=[],col=[],idx=[],uv=[];for(let i=0;i<=this.N;i++){const s=this.samples[i%this.N],ax=s.p.x+s.side.x*offA,az=s.p.z+s.side.z*offA,ay=s.p.y+hA,bx=s.p.x+s.side.x*offB,bz=s.p.z+s.side.z*offB,by=s.p.y+hB;pos.push(ax,ay,az,bx,by,bz);norm.push(0,1,0,0,1,0);uv.push(0,i/this.N*24,1,i/this.N*24);if(colorFn){const c=new THREE.Color(colorFn(i%this.N));col.push(c.r,c.g,c.b,c.r,c.g,c.b);}}for(let i=0;i<this.N;i++){const a=i*2,b=a+1,c=((i+1)%this.N)*2,d=c+1;idx.push(a,c,b,b,c,d);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(norm,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));if(colorFn)geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));geo.setIndex(idx);geo.computeBoundingSphere();const m=new THREE.Mesh(geo,mat);this.scene.add(m);return m;}
+ clearPoint(x,z,margin=2){return this.nearest(x,z).distance>=this.halfWidth+margin;}
+  clearFootprint(x,z,w,d,rot,margin=2.5){
+    const c=Math.cos(rot),s=Math.sin(rot),hw=w*.5,hd=d*.5,pts=[[0,0],[-hw,-hd],[hw,-hd],[-hw,hd],[hw,hd],[-hw,0],[hw,0],[0,-hd],[0,hd]];
+    for(const [lx,lz] of pts){const wx=x+lx*c+lz*s,wz=z-lx*s+lz*c;if(this.nearest(wx,wz).distance<this.halfWidth+margin)return false;}
+    return true;
+  }
+  addRibbon(offA,offB,hA,hB,mat,colorFn){const pos=[],norm=[],col=[],idx=[],uv=[];for(let i=0;i<=this.N;i++){const s=this.samples[i%this.N],ax=s.p.x+s.side.x*offA,az=s.p.z+s.side.z*offA,ay=s.p.y+hA,bx=s.p.x+s.side.x*offB,bz=s.p.z+s.side.z*offB,by=s.p.y+hB;pos.push(ax,ay,az,bx,by,bz);norm.push(0,1,0,0,1,0);uv.push(0,i/this.N*24,1,i/this.N*24);if(colorFn){const c=new THREE.Color(colorFn(i%this.N));col.push(c.r,c.g,c.b,c.r,c.g,c.b);}}for(let i=0;i<this.N;i++){const a=i*2,b=a+1,c=((i+1)%this.N)*2,d=c+1;idx.push(a,c,b,b,c,d);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(norm,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));if(colorFn)geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));geo.setIndex(idx);geo.computeBoundingSphere();const m=new THREE.Mesh(geo,mat);this.scene.add(m);return m;}
  addWall(offset,mat){const pos=[],idx=[];for(let i=0;i<=this.N;i++){const s=this.samples[i%this.N],x=s.p.x+s.side.x*offset,z=s.p.z+s.side.z*offset;pos.push(x,s.p.y+.08,z,x,s.p.y+1.05,z);}for(let i=0;i<this.N;i++){const a=i*2,b=a+1,c=((i+1)%this.N)*2,d=c+1;idx.push(a,b,c,b,d,c);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setIndex(idx);geo.computeVertexNormals();geo.computeBoundingSphere();const m=new THREE.Mesh(geo,mat);this.scene.add(m);return m;}
  addDashes(){const pos=[],idx=[];let v=0;for(let d=0;d<this.length;d+=13){const u=d/this.length,p=this.curve.getPointAt(u),t=this.curve.getTangentAt(u).normalize(),side=new THREE.Vector3().crossVectors(UP,t).normalize();const a=p.clone().addScaledVector(t,-2.8).addScaledVector(side,-.08),b=p.clone().addScaledVector(t,-2.8).addScaledVector(side,.08),c=p.clone().addScaledVector(t,2.8).addScaledVector(side,-.08),e=p.clone().addScaledVector(t,2.8).addScaledVector(side,.08);for(const q of[a,b,c,e])pos.push(q.x,q.y+.085,q.z);idx.push(v,v+2,v+1,v+1,v+2,v+3);v+=4;}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setIndex(idx);geo.computeVertexNormals();this.scene.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0xdffaff,transparent:true,opacity:.82,blending:THREE.AdditiveBlending,depthWrite:false})));}
  buildRamp(){const arr=[],start=this.rampCenter-this.rampHalf,end=this.rampCenter+this.rampHalf;for(let i=start;i<end;i++){const a=this.samples[(i+this.N)%this.N],b=this.samples[(i+1+this.N)%this.N],ah=this.rampHeightAtProgress(i/this.N)+.11,bh=this.rampHeightAtProgress((i+1)/this.N)+.11;const aL=[a.p.x-a.side.x*this.halfWidth,a.p.y+ah,a.p.z-a.side.z*this.halfWidth],aR=[a.p.x+a.side.x*this.halfWidth,a.p.y+ah,a.p.z+a.side.z*this.halfWidth],bL=[b.p.x-b.side.x*this.halfWidth,b.p.y+bh,b.p.z-b.side.z*this.halfWidth],bR=[b.p.x+b.side.x*this.halfWidth,b.p.y+bh,b.p.z+b.side.z*this.halfWidth];arr.push(...aL,...aR,...bL,...aR,...bR,...bL);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));geo.computeVertexNormals();this.scene.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xf6c63b,emissive:0x5d4200,emissiveIntensity:.35,roughness:.52,metalness:.16})));}
@@ -326,11 +332,14 @@ class World{
     };
     const textures=[0,1,2,3].map(makeWindowTex);
     this.buildingMats=textures.map(t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping;return new THREE.MeshStandardMaterial({map:t,emissiveMap:t,emissive:0xffffff,emissiveIntensity:1.15,color:0xffffff,roughness:.62,metalness:.27});});
-    const count=this.mapKey==='port'?86:130,r=mulberry32(91273),data=[];
-    for(let i=0;i<count;i++){
-      const ss=this.track.samples[(i*29+13)%this.track.N],sign=i%2?1:-1,off=this.track.halfWidth+18+r()*54,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*22),w=7+r()*14,d=7+r()*14,h=this.mapKey==='port'?8+r()*r()*42:12+r()*r()*74,rot=r()*Math.PI;
-      data.push({x:p.x,z:p.z,w,h,d,rot,variant:i%4});
+    const target=this.mapKey==='port'?86:130,r=mulberry32(91273),data=[];let tries=0;
+    while(data.length<target&&tries<target*18){
+      tries++;
+      const ss=this.track.samples[(Math.floor(r()*this.track.N))%this.track.N],sign=r()>.5?1:-1,off=this.track.halfWidth+16+r()*62,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*26),w=7+r()*14,d=7+r()*14,h=this.mapKey==='port'?8+r()*r()*42:12+r()*r()*74,rot=r()*Math.PI;
+      if(!this.track.clearFootprint(p.x,p.z,w,d,rot,3.2))continue;
+      data.push({x:p.x,z:p.z,w,h,d,rot,variant:data.length%4});
     }
+    const count=data.length;
     const dummy=new THREE.Object3D(),col=new THREE.Color();this.buildingMeshes=[];
     for(let v=0;v<4;v++){
       const items=data.filter(b=>b.variant===v),mesh=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),this.buildingMats[v],items.length);mesh.geometry.translate(0,.5,0);
@@ -398,7 +407,7 @@ class World{
     const specs=this.mapKey==='port'?[[.08,'铁潮港','IRON TIDE / 01','#ff9e45'],[.24,'CARGO 09','PORT AUTHORITY','#39f4ff'],[.43,'DOCK 7','NIGHT SHIFT','#d6ff3f'],[.64,'IRON TIDE','HEAVY FREIGHT','#ff3f9a'],[.83,'NO LIMIT','HARBOR AFTER DARK','#ff9e45']]:[[.075,'霓虹湾','NEON BAY / 01','#39f4ff'],[.18,'BAY 09','HARBOR / DOCKS','#ff9e45'],[.34,'NIGHTSHIFT','STREET DIVISION','#d6ff3f'],[.51,'SEA GLASS','NIGHT MARKET','#39f4ff'],[.62,'KAZE','DRIFT FREQUENCY','#ff38ce'],[.83,'NO LIMIT','NEON BAY AFTER DARK','#ff9e45']];
     const frameMat=new THREE.MeshStandardMaterial({color:0x101a28,metalness:.82,roughness:.26,emissive:0x0b2236,emissiveIntensity:.34});
     for(let i=0;i<specs.length;i++){
-      const[u,main,sub,color]=specs[i],p=this.track.curve.getPointAt(u),t=this.track.curve.getTangentAt(u).normalize(),side=new THREE.Vector3().crossVectors(UP,t).normalize(),pos=p.clone().addScaledVector(side,(i%2?1:-1)*(this.track.halfWidth+9)).add(new THREE.Vector3(0,6,0)),tex=signTexture(main,sub,color),group=new THREE.Group();
+      const[u,main,sub,color]=specs[i],p=this.track.curve.getPointAt(u),t=this.track.curve.getTangentAt(u).normalize(),side=new THREE.Vector3().crossVectors(UP,t).normalize();let off=this.track.halfWidth+9,pos=p.clone().addScaledVector(side,(i%2?1:-1)*off).add(new THREE.Vector3(0,6,0));for(let tr=0;tr<5&&!this.track.clearPoint(pos.x,pos.z,5);tr++){off+=7;pos=p.clone().addScaledVector(side,(i%2?1:-1)*off).add(new THREE.Vector3(0,6,0));}const tex=signTexture(main,sub,color),group=new THREE.Group();
       group.position.copy(pos);group.lookAt(p.x,pos.y,p.z);
       const plane=new THREE.Mesh(new THREE.PlaneGeometry(13.8,5.8),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));plane.position.z=.19;plane.userData.staticPart=true;group.add(plane);
       const back=new THREE.Mesh(new THREE.BoxGeometry(14.8,6.6,.34),frameMat);back.userData.staticPart=true;group.add(back);
@@ -419,11 +428,16 @@ class World{
     this.bayGlints.frustumCulled=false;this.scene.add(this.bayGlints);
     const whGeo=new THREE.BoxGeometry(1,1,1);whGeo.translate(0,.5,0);
     const whMat=new THREE.MeshStandardMaterial({color:0x09131f,roughness:.72,metalness:.28,emissive:0x08263c,emissiveIntensity:.42});
-    const wh=new THREE.InstancedMesh(whGeo,whMat,22),dummy=new THREE.Object3D(),rr=mulberry32(7781),whData=[];
-    for(let i=0;i<22;i++){const w=16+rr()*30,h=6+rr()*15,d=16+rr()*30,x=228+rr()*30,z=-220+rr()*620,rot=rr()*.35;dummy.position.set(x,0,z);dummy.rotation.y=rot;dummy.scale.set(w,h,d);dummy.updateMatrix();wh.setMatrixAt(i,dummy.matrix);whData.push({x,z,w,h,d,rot});}
-    wh.instanceMatrix.needsUpdate=true;this.scene.add(wh);
-    const whTrim=new THREE.InstancedMesh(new THREE.BoxGeometry(1,.12,1),new THREE.MeshBasicMaterial({color:0xffffff}),22),whCol=new THREE.Color(),wc=[0x39f4ff,0xff2f88,0xff9e45];
-    for(let i=0;i<22;i++){const b=whData[i];dummy.position.set(b.x,b.h+.06,b.z);dummy.rotation.set(0,b.rot,0);dummy.scale.set(b.w*1.02,1,b.d*1.02);dummy.updateMatrix();whTrim.setMatrixAt(i,dummy.matrix);whCol.setHex(wc[i%3]);whTrim.setColorAt(i,whCol);}whTrim.instanceMatrix.needsUpdate=true;if(whTrim.instanceColor)whTrim.instanceColor.needsUpdate=true;this.scene.add(whTrim);
+    const wh=new THREE.InstancedMesh(whGeo,whMat,22),dummy=new THREE.Object3D(),rr=mulberry32(7781),whData=[];let wtries=0;
+    while(whData.length<22&&wtries<120){
+      wtries++;
+      const w=16+rr()*30,h=6+rr()*15,d=16+rr()*30,x=228+rr()*30,z=-220+rr()*620,rot=rr()*.35;
+      if(!this.track.clearFootprint(x,z,w,d,rot,4.0))continue;
+      dummy.position.set(x,0,z);dummy.rotation.y=rot;dummy.scale.set(w,h,d);dummy.updateMatrix();wh.setMatrixAt(whData.length,dummy.matrix);whData.push({x,z,w,h,d,rot});
+    }
+    wh.count=whData.length;wh.instanceMatrix.needsUpdate=true;this.warehouses=wh;this.scene.add(wh);
+    const whTrim=new THREE.InstancedMesh(new THREE.BoxGeometry(1,.12,1),new THREE.MeshBasicMaterial({color:0xffffff}),whData.length),whCol=new THREE.Color(),wc=[0x39f4ff,0xff2f88,0xff9e45];
+    for(let i=0;i<whData.length;i++){const b=whData[i];dummy.position.set(b.x,b.h+.06,b.z);dummy.rotation.set(0,b.rot,0);dummy.scale.set(b.w*1.02,1,b.d*1.02);dummy.updateMatrix();whTrim.setMatrixAt(i,dummy.matrix);whCol.setHex(wc[i%3]);whTrim.setColorAt(i,whCol);}whTrim.instanceMatrix.needsUpdate=true;if(whTrim.instanceColor)whTrim.instanceColor.needsUpdate=true;this.warehouseTrim=whTrim;this.scene.add(whTrim);
     const craneMat=new THREE.MeshStandardMaterial({color:0x243445,metalness:.82,roughness:.32,emissive:0x0a2a3e,emissiveIntensity:.35});
     for(const z of(this.mapKey==='port'?[-170,-55,60,190]:[-95,85])){
       const mast=new THREE.Mesh(new THREE.BoxGeometry(.85,27,.85),craneMat);mast.position.set(270,13.5,z);this.scene.add(mast);
@@ -446,12 +460,13 @@ class World{
   buildPortYard(){
     const count=120,r=mulberry32(55179),geo=new THREE.BoxGeometry(1,1,1);geo.translate(0,.5,0);
     const mat=new THREE.MeshStandardMaterial({color:0xffffff,metalness:.46,roughness:.48,emissive:0x081820,emissiveIntensity:.24});
-    const mesh=new THREE.InstancedMesh(geo,mat,count),dummy=new THREE.Object3D(),col=new THREE.Color(),palette=[0xb84b2e,0x1f6f78,0x7c3347,0x3c5f7a,0xb4882f];
+    const mesh=new THREE.InstancedMesh(geo,mat,count),dummy=new THREE.Object3D(),col=new THREE.Color(),palette=[0xb84b2e,0x1f6f78,0x7c3347,0x3c5f7a,0xb4882f];let placed=0;
     for(let i=0;i<count;i++){
-      const ss=this.track.samples[(i*13+31)%this.track.N],sign=i%2?1:-1,off=this.track.halfWidth+4.6+(i%5)*3.9+r()*1.2,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*4);
-      const stack=i%7===0;dummy.position.set(p.x,-.12,p.z);dummy.rotation.set(0,Math.atan2(ss.t.x,ss.t.z),0);dummy.scale.set(2.55,stack?5.2:2.6,6.1);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);col.setHex(palette[i%palette.length]);mesh.setColorAt(i,col);
+      const ss=this.track.samples[(i*13+31)%this.track.N],sign=i%2?1:-1,off=this.track.halfWidth+4.6+(i%5)*3.9+r()*1.2,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*4),rot=Math.atan2(ss.t.x,ss.t.z);
+      if(!this.track.clearFootprint(p.x,p.z,2.55,6.1,rot,2.0))continue;
+      const stack=i%7===0;dummy.position.set(p.x,-.12,p.z);dummy.rotation.set(0,rot,0);dummy.scale.set(2.55,stack?5.2:2.6,6.1);dummy.updateMatrix();mesh.setMatrixAt(placed,dummy.matrix);col.setHex(palette[i%palette.length]);mesh.setColorAt(placed,col);placed++;
     }
-    mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;this.portYard=new THREE.Group();this.portYard.add(mesh);
+    mesh.count=placed;mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;this.portYard=new THREE.Group();this.portYard.add(mesh);
     const ship=new THREE.Group(),hull=new THREE.Mesh(new THREE.BoxGeometry(92,7,22),new THREE.MeshStandardMaterial({color:0x13212b,metalness:.6,roughness:.38,emissive:0x071a24,emissiveIntensity:.3}));hull.position.y=3.4;ship.add(hull);
     const deck=new THREE.Mesh(new THREE.BoxGeometry(78,1,18),new THREE.MeshStandardMaterial({color:0x384650,metalness:.45,roughness:.5}));deck.position.set(-3,7.2,0);ship.add(deck);
     for(let i=0;i<10;i++){const box=new THREE.Mesh(new THREE.BoxGeometry(4.8,2.5,4.2),new THREE.MeshStandardMaterial({color:palette[i%palette.length],roughness:.55,metalness:.35}));box.position.set(-34+i*7,9.2,(i%2?.2:0)+2.2);ship.add(box);}
