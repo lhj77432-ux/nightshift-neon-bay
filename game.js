@@ -679,7 +679,7 @@ class CarController{
     input=input||{left:false,right:false,accel:false,brake:false,nitro:false};
     const st=this.stats;
     const targetSteer=canDrive?((input.right?1:0)-(input.left?1:0)):0;
-    this.steer=damp(this.steer,targetSteer,8.5,dt);
+    this.steer=damp(this.steer,targetSteer,11,dt);
     const throttle=canDrive&&input.accel?1:0;
     const brake=canDrive&&input.brake?1:0;
     this.brakeInput=!!brake;this.signalLeft=canDrive&&!!input.left&&!input.right;this.signalRight=canDrive&&!!input.right&&!input.left;
@@ -688,8 +688,8 @@ class CarController{
     const speed=Math.hypot(this.velocity.x,this.velocity.z),onRoad=Math.abs(info.lateral)<=track.halfWidth+.6;
     const handbrake=brake>0&&speed>14&&Math.abs(this.steer)>.18;
     if(!this.airborne){
-      const authority=clamp(speed/5,0,1),turn=st.steer*(.6+.4/(1+speed*.02))*authority;
-      this.yaw-=this.steer*turn*dt*(handbrake?1.6:1);
+      const authority=clamp(speed/3.5,0,1),turn=st.steer*(.68+.42/(1+speed*.02))*authority*1.12;
+      this.yaw-=this.steer*turn*dt*(handbrake?1.7:1);
     }
     this.forward.set(Math.sin(this.yaw),0,Math.cos(this.yaw));this.right.set(-Math.cos(this.yaw),0,Math.sin(this.yaw));
     let vf=this.velocity.dot(this.forward),vl=this.velocity.dot(this.right);
@@ -735,7 +735,7 @@ class CarController{
     }else{
       this.pitch-=(throttle-brake)*1.15*dt;this.roll+=this.steer*1.35*dt;
       this.pitch=clamp(this.pitch,-.8,.8);this.roll=clamp(this.roll,-.9,.9);
-      this.yaw-=this.steer*.85*dt;this.forward.set(Math.sin(this.yaw),0,Math.cos(this.yaw));this.right.set(-Math.cos(this.yaw),0,Math.sin(this.yaw));
+      this.yaw-=this.steer*1.0*dt;this.forward.set(Math.sin(this.yaw),0,Math.cos(this.yaw));this.right.set(-Math.cos(this.yaw),0,Math.sin(this.yaw));
     }
     const totalSpeed=Math.hypot(this.velocity.x,this.velocity.z);
     this.speedKmh=totalSpeed*3.6;this.gear=Math.min(6,Math.max(1,Math.floor(this.speedKmh/42)+1));
