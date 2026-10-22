@@ -360,10 +360,10 @@ class World{
     };
     const textures=[0,1,2,3].map(makeWindowTex);
     this.buildingMats=textures.map(t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping;return new THREE.MeshStandardMaterial({map:t,emissiveMap:t,emissive:0xffffff,emissiveIntensity:1.15,color:0xffffff,roughness:.62,metalness:.27});});
-    const target=this.mapKey==='port'?86:130,r=mulberry32(91273),data=[];let tries=0;
+    const target=this.mapKey==='port'?105:180,r=mulberry32(91273),data=[];let tries=0;
     while(data.length<target&&tries<target*18){
       tries++;
-      const ss=this.track.samples[(Math.floor(r()*this.track.N))%this.track.N],sign=r()>.5?1:-1,off=this.track.halfWidth+16+r()*62,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*26),w=7+r()*14,d=7+r()*14,h=this.mapKey==='port'?8+r()*r()*42:12+r()*r()*74,rot=r()*Math.PI;
+      const ss=this.track.samples[(Math.floor(r()*this.track.N))%this.track.N],sign=r()>.5?1:-1,off=this.track.halfWidth+16+r()*62,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*26),w=5+r()*10,d=5+r()*10,h=this.mapKey==='port'?9+r()*r()*50:20+r()*r()*105,rot=r()*Math.PI;
       if(!this.track.clearFootprint(p.x,p.z,w,d,rot,3.2))continue;
       data.push({x:p.x,z:p.z,w,h,d,rot,variant:data.length%4});
     }
@@ -387,7 +387,10 @@ class World{
     trim.instanceMatrix.needsUpdate=true;if(trim.instanceColor)trim.instanceColor.needsUpdate=true;ac.instanceMatrix.needsUpdate=true;ant.instanceMatrix.needsUpdate=true;
     const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.BufferAttribute(beaconPos,3));const beacons=new THREE.Points(bg,new THREE.PointsMaterial({map:SOFT,color:0xff3344,size:.72,transparent:true,opacity:.85,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true}));beacons.frustumCulled=false;
     const ag=new THREE.BufferGeometry();ag.setAttribute('position',new THREE.Float32BufferAttribute(adPos,3));ag.setAttribute('color',new THREE.Float32BufferAttribute(adCol,3));this.adGlow=new THREE.Points(ag,new THREE.PointsMaterial({map:SOFT,vertexColors:true,size:1.1,transparent:true,opacity:.34,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true}));this.adGlow.frustumCulled=false;
-    this.cityDetails=new THREE.Group();this.cityDetails.add(trim,ac,ant,beacons,this.adGlow);this.scene.add(this.cityDetails);
+    const edgeCount=Math.max(1,data.length*2),edge=new THREE.InstancedMesh(new THREE.BoxGeometry(.085,1,.085),new THREE.MeshBasicMaterial({color:0xffffff}),edgeCount),edgeColors=[0xff2f88,0x39f4ff,0xff9e45];let ei=0;
+    for(let i=0;i<data.length;i++){const b=data[i],c=Math.cos(b.rot),s=Math.sin(b.rot);for(const sx of[-1,1]){const lx=sx*b.w*.51,px=b.x+lx*c,pz=b.z-lx*s;dummy.position.set(px,b.h*.45,pz);dummy.rotation.set(0,b.rot,0);dummy.scale.set(1,b.h*.86,1);dummy.updateMatrix();edge.setMatrixAt(ei,dummy.matrix);col.setHex(edgeColors[(i+(sx>0?1:0))%3]);edge.setColorAt(ei,col);ei++;}}
+    edge.count=ei;edge.instanceMatrix.needsUpdate=true;if(edge.instanceColor)edge.instanceColor.needsUpdate=true;
+    this.cityDetails=new THREE.Group();this.cityDetails.add(trim,ac,ant,beacons,this.adGlow,edge);this.scene.add(this.cityDetails);this.buildingData=data;
     
   }
   buildLandmarks(){
@@ -410,6 +413,8 @@ class World{
     }
     const cg=new THREE.BufferGeometry();cg.setAttribute('position',new THREE.Float32BufferAttribute(cablePos,3));this.landmarkCables=new THREE.LineSegments(cg,new THREE.LineBasicMaterial({color:0xff9d61,transparent:true,opacity:.62}));g.add(this.landmarkCables);
     const dl=[];for(let zz=bz-190;zz<=bz+190;zz+=20)for(const sx of[-1,1])dl.push(bx+sx*6.8,19.5,zz);const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.Float32BufferAttribute(dl,3));this.landmarkGlow=new THREE.Points(dg,new THREE.PointsMaterial({map:SOFT,color:0xffb469,size:1.15,transparent:true,opacity:.55,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true}));g.add(this.landmarkGlow);
+    const mountainMat=new THREE.MeshStandardMaterial({color:0x0b2130,roughness:.98,metalness:.02,emissive:0x08161f,emissiveIntensity:.24}),mountainGeo=new THREE.ConeGeometry(1,1,5);mountainGeo.translate(0,.5,0);const mr=mulberry32(4455);
+    for(let i=0;i<22;i++){const ang=i/22*Math.PI*2,rad=610+mr()*45,m=add(mountainGeo,mountainMat,Math.cos(ang)*rad,0,Math.sin(ang)*rad);m.scale.set(42+mr()*55,34+mr()*64,42+mr()*55);m.rotation.y=mr()*Math.PI;}
     mergeStaticCar(g);this.scene.add(g);this.landmarks=g;
   }
   buildLamps(){
@@ -501,7 +506,8 @@ class World{
     const bridge=new THREE.Mesh(new THREE.BoxGeometry(13,12,16),new THREE.MeshStandardMaterial({color:0x263b4c,metalness:.5,roughness:.4,emissive:0x0b2638,emissiveIntensity:.45}));bridge.position.set(35,12,0);ship.add(bridge);
     const mast=new THREE.Mesh(new THREE.CylinderGeometry(.16,.3,13,6),new THREE.MeshStandardMaterial({color:0x263744,metalness:.7,roughness:.3}));mast.position.set(35,24,0);ship.add(mast);
     const top=new THREE.Mesh(new THREE.SphereGeometry(.65,8,6),new THREE.MeshBasicMaterial({color:0xff4455}));top.position.set(35,30.8,0);ship.add(top);
-    ship.position.set(this.mapKey==='port'?650:520,0,150);ship.rotation.y=-.25;this.portYard.add(ship);this.scene.add(this.portYard);
+    ship.position.set(this.mapKey==='port'?650:520,0,150);ship.rotation.y=-.25;this.portYard.add(ship);
+    const ferry=new THREE.Group(),hullMat=new THREE.MeshStandardMaterial({color:0x1b3a3a,metalness:.58,roughness:.36,emissive:0x08262a,emissiveIntensity:.35}),trimMat=new THREE.MeshStandardMaterial({color:0xd2ddd8,metalness:.25,roughness:.45}),winMat=new THREE.MeshBasicMaterial({color:0xffd38a}),lightMat=new THREE.MeshBasicMaterial({color:0x6ff4ff});const fh=new THREE.Mesh(new THREE.BoxGeometry(23,2.4,7),hullMat);fh.position.y=1.4;ferry.add(fh);const fdeck=new THREE.Mesh(new THREE.BoxGeometry(17,2,5.4),trimMat);fdeck.position.y=3.2;ferry.add(fdeck);const fupper=new THREE.Mesh(new THREE.BoxGeometry(11,1.8,4.5),trimMat);fupper.position.y=4.9;ferry.add(fupper);const windows=new THREE.Mesh(new THREE.BoxGeometry(15.8,.55,5.55),winMat);windows.position.y=3.8;ferry.add(windows);const roofLight=new THREE.Mesh(new THREE.BoxGeometry(9,.22,.22),lightMat);roofLight.position.set(0,6,.5);ferry.add(roofLight);const fmast=new THREE.Mesh(new THREE.CylinderGeometry(.1,.18,5,6),trimMat);fmast.position.set(0,7.3,0);ferry.add(fmast);ferry.position.set(this.mapKey==='port'?760:540,-.2,20);this.ferry=ferry;this.ferryBaseZ=20;this.scene.add(ferry);this.scene.add(this.portYard);
   }
   buildAtmosphere(){
     const r=mulberry32(99117),dustCount=110,dp=new Float32Array(dustCount*3);
@@ -527,7 +533,7 @@ class World{
       this.water.geometry.attributes.position.needsUpdate=true;
       if(this.waterFrame%4===0)this.water.geometry.computeVertexNormals();
     }
-    if(this.lighthouseBeam)this.lighthouseBeam.rotation.y+=dt*.42;
+    if(this.lighthouseBeam)this.lighthouseBeam.rotation.y+=dt*.42;if(this.ferry){this.ferry.position.z=this.ferryBaseZ+Math.sin(this.waterTime*.08)*28;this.ferry.rotation.y=-.25+Math.sin(this.waterTime*.05)*.12;}
     if(this.dust){
       const a=this.dust.geometry.attributes.position.array;
       for(let i=0;i<a.length;i+=3){a[i+1]+=dt*(.18+(i%7)*.03);if(a[i+1]>9)a[i+1]=.5;}
