@@ -92,6 +92,24 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 .track-picker{display:flex;gap:7px;margin:0 0 12px}
 .track-chip{flex:1;min-height:44px;padding:5px 8px;text-align:left;border:1px solid rgba(255,255,255,.14);background:rgba(8,14,25,.72);pointer-events:auto;transition:.16s;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}.track-chip b{display:block;font-size:11px;color:#dce8f7}.track-chip small{display:block;font-size:7px;letter-spacing:.14em;color:#7588a2;margin-top:2px}.track-chip.selected{border-color:var(--mode);background:color-mix(in srgb,var(--mode) 13%,rgba(7,13,23,.9));box-shadow:inset 0 0 16px color-mix(in srgb,var(--mode) 9%,transparent)}.track-chip.selected small{color:var(--mode)}
 @media(max-width:1000px) and (orientation:landscape){.ms-track-label{font-size:6px;margin-bottom:2px}.track-picker{gap:5px;margin-bottom:5px}.track-chip{min-height:44px;padding:4px 5px}.track-chip b{font-size:9px}.track-chip small{font-size:6px;margin-top:0}.ms-detail .ms-meta{margin-bottom:4px}.ms-ride{display:none}.ms-detail p{margin-bottom:5px}.ms-mode-icon{margin:5px 0}.ms-garage{min-height:34px}}
+body{--panel-alpha:.82;--panel-alpha2:.70}
+body[data-ui-theme="cyan"]{--acid:#d6ff3f;--cyan:#39f4ff;--pink:#ff2f88}
+body[data-ui-theme="magenta"]{--acid:#ff4fd8;--cyan:#9f8cff;--pink:#ff914d}
+body[data-ui-theme="amber"]{--acid:#ffd24a;--cyan:#37f0ff;--pink:#ff5a3c}
+body[data-ui-theme="emerald"]{--acid:#59ffb0;--cyan:#2edfff;--pink:#d879ff}
+.hud-card,.center-hud,.map-card,.mini-actions button,.side-card,.tune-panel{background-color:rgba(7,10,20,var(--panel-alpha))!important}
+.ms-detail{background:linear-gradient(160deg,rgba(9,19,34,var(--panel-alpha)),rgba(5,8,16,var(--panel-alpha2)))!important}
+body.no-minimap .map-card{display:none!important}
+body.reduce-ui-motion *,body.reduce-ui-motion *:before,body.reduce-ui-motion *:after{animation:none!important;transition:none!important}
+#screen-ui.active{display:block;pointer-events:auto;background:rgba(2,4,10,.66);backdrop-filter:blur(12px)}
+.ui-modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(680px,calc(100% - 26px));max-height:calc(100% - 24px);overflow:auto;border:1px solid rgba(255,255,255,.18);background:linear-gradient(145deg,rgba(10,18,31,.98),rgba(5,8,16,.96));padding:clamp(18px,2.6vw,30px);box-shadow:0 30px 100px #000d;clip-path:polygon(0 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%)}
+.ui-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.ui-head h2{font-size:clamp(34px,4.7vw,58px);line-height:.88;font-style:italic;letter-spacing:-.06em;margin:8px 0}.ui-head p{font-size:12px;color:#8796af;margin:0;line-height:1.5}
+.ui-close,.ui-reset,.ui-done{min-height:44px;border:1px solid rgba(255,255,255,.2);background:rgba(8,14,24,.8);padding:8px 15px;font-size:12px;pointer-events:auto}.ui-close{white-space:nowrap}.ui-done{background:var(--acid);color:#071016;border-color:var(--acid);font-weight:900}.ui-reset{color:#aebbd0}.ui-actions{display:flex;gap:8px;margin-top:18px}.ui-actions button{flex:1}
+.ui-row{border-top:1px solid rgba(255,255,255,.1);padding:15px 0}.ui-row-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}.ui-row-title b{font-size:13px;letter-spacing:.04em}.ui-row-title small{font-size:10px;color:#75859e}
+.theme-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.ui-theme{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;min-height:52px;border:1px solid rgba(255,255,255,.15);background:rgba(8,14,25,.8);pointer-events:auto;font-size:11px;color:#c3d0e2}.ui-theme i{width:13px;height:13px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c)}.ui-theme.selected{border-color:var(--c);box-shadow:inset 0 0 18px color-mix(in srgb,var(--c) 14%,transparent);color:#fff}.ui-theme.selected:after{content:"";position:absolute;right:6px;top:4px;color:var(--c);font-size:10px}
+.ui-range{width:calc(100% - 58px);accent-color:var(--cyan);vertical-align:middle;min-height:30px}.ui-value{display:inline-block;width:50px;text-align:right;font-size:12px;color:var(--acid);font-variant-numeric:tabular-nums}
+.ui-toggles{display:flex;gap:18px;flex-wrap:wrap}.ui-check{display:flex;align-items:center;gap:9px;min-height:44px;cursor:pointer;font-size:12px;color:#c4d1e3}.ui-check input{width:20px;height:20px;accent-color:var(--cyan)}
+@media(max-width:860px){.ui-modal{width:calc(100% - 18px);padding:15px}.ui-head h2{font-size:32px}.ui-head p{display:none}.theme-grid{grid-template-columns:repeat(2,1fr)}.ui-row{padding:10px 0}.ui-theme{min-height:46px}}
 </style>
 </head>
 <body>
@@ -150,6 +168,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
     <button class="pill" id="setRain" data-setting="rain">雨  开</button>
     <button class="pill" id="setSound" data-setting="sound">音效  开</button>
     <button class="pill" id="setQuality" data-setting="quality">画质  自动</button>
+    <button class="pill" data-action="ui-settings">界面设置  UI</button>
   </footer>
 </section>
 
@@ -165,6 +184,25 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
   <div class="drift-hud" id="hudDrift"><b id="driftCombo">x1 DRIFT</b><span id="driftScore">0</span></div><div class="countdown" id="countdown"></div><div class="toast" id="toast"></div><div class="controls-hint">&larr; / &rarr; 转向  &uarr; 加速  &darr; 刹车兼漂移  SHIFT 氮气  C 视角  H 远近光  R 复位  ESC 暂停</div>
 </section>
 
+<section id="screen-ui" class="screen">
+  <div class="ui-modal">
+    <div class="ui-head"><div><div class="kicker">INTERFACE / CUSTOMIZE</div><h2>界面设置</h2><p>只调整 HUD 与菜单外观，不影响驾驶、碰撞和比赛规则。</p></div><button class="ui-close" data-action="close-ui">关闭</button></div>
+    <div class="ui-row"><div class="ui-row-title"><b>主题色</b><small>同步到菜单、HUD、按钮与高亮</small></div>
+      <div class="theme-grid" id="uiThemeGrid">
+        <button class="ui-theme" data-ui-theme="cyan"><i style="--c:#39f4ff"></i><span>霓虹青</span></button>
+        <button class="ui-theme" data-ui-theme="magenta"><i style="--c:#ff4fd8"></i><span>赛博粉</span></button>
+        <button class="ui-theme" data-ui-theme="amber"><i style="--c:#ffd24a"></i><span>港湾金</span></button>
+        <button class="ui-theme" data-ui-theme="emerald"><i style="--c:#59ffb0"></i><span>翡翠绿</span></button>
+      </div>
+    </div>
+    <div class="ui-row"><div class="ui-row-title"><b>面板透明度</b><small>HUD 与菜单玻璃层的通透程度</small></div><input id="uiOpacity" class="ui-range" type="range" min="50" max="100" step="1" value="82"><div class="ui-value"><span id="uiOpacityValue">82%</span></div></div>
+    <div class="ui-row ui-toggles">
+      <label class="ui-check"><input id="uiMinimap" type="checkbox" checked><span>显示小地图</span></label>
+      <label class="ui-check"><input id="uiMotion" type="checkbox" checked><span>界面动效</span></label>
+    </div>
+    <div class="ui-actions"><button class="ui-done" data-action="close-ui">完成</button><button class="ui-reset" data-action="reset-ui">恢复默认</button></div>
+  </div>
+</section>
 <section id="screen-pause" class="screen"><div class="modal"><div class="kicker">SYSTEM / PAUSED</div><h2>霓虹暂停</h2><p>比赛计时已冻结。继续驾驶，或回到车库升级你的车。</p><button data-action="resume">继续驾驶</button><button data-action="retry">重开本局</button><button data-action="menu">退出到主菜单</button></div></section>
 <section id="screen-results" class="screen"><div class="result-card"><div class="kicker" id="resKicker">RACE COMPLETE</div><h2 id="resTitle">第 1 名</h2><div class="result-stats" id="resStats"></div><div class="reward">CREDITS EARNED <b id="resReward">+0</b></div><div class="note" id="resNote"></div><button id="btnRetry" data-action="retry">再跑一局</button><button data-action="menu">返回主菜单</button></div></section>
 </div>
@@ -182,9 +220,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261022s" defer></script>
+<script src="./game.js?v=20261022t" defer></script>
 </body>
 </html>
+
 
 
 
