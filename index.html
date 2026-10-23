@@ -110,6 +110,8 @@ body.reduce-ui-motion *,body.reduce-ui-motion *:before,body.reduce-ui-motion *:a
 .ui-range{width:calc(100% - 58px);accent-color:var(--cyan);vertical-align:middle;min-height:30px}.ui-value{display:inline-block;width:50px;text-align:right;font-size:12px;color:var(--acid);font-variant-numeric:tabular-nums}
 .ui-toggles{display:flex;gap:18px;flex-wrap:wrap}.ui-check{display:flex;align-items:center;gap:9px;min-height:44px;cursor:pointer;font-size:12px;color:#c4d1e3}.ui-check input{width:20px;height:20px;accent-color:var(--cyan)}
 @media(max-width:860px){.ui-modal{width:calc(100% - 18px);padding:15px}.ui-head h2{font-size:32px}.ui-head p{display:none}.theme-grid{grid-template-columns:repeat(2,1fr)}.ui-row{padding:10px 0}.ui-theme{min-height:46px}}
+.ms-ui-btn{min-height:44px;padding:0 14px;border:1px solid var(--cyan);background:rgba(8,17,27,.88);color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.06em;pointer-events:auto;box-shadow:0 0 18px color-mix(in srgb,var(--cyan) 18%,transparent)}.ms-ui-btn span{display:inline-block;padding:2px 5px;margin-right:4px;background:var(--cyan);color:#031014;font-size:9px}.ms-ui-btn:hover{background:var(--cyan);color:#061016}
+@media(max-width:700px){.ms-ui-btn{padding:0 9px;font-size:0;min-width:44px}.ms-ui-btn span{font-size:10px;margin:0;padding:3px 6px}}
 </style>
 </head>
 <body>
@@ -118,6 +120,7 @@ body.reduce-ui-motion *,body.reduce-ui-motion *:before,body.reduce-ui-motion *:a
 <section id="screen-menu" class="screen active">
   <header class="ms-top">
     <div class="ms-brand"><strong>NIGHTSHIFT</strong><span>NEON BAY / RACE CONTROL</span></div>
+    <button class="ms-ui-btn" data-action="ui-settings"><span>UI</span> 界面设置</button>
     <div class="ms-res">
       <div><small>CREDITS</small><b id="menuCredits">0 CR</b></div>
       <div><small>BEST</small><b id="menuBest">--:--.---</b></div>
@@ -203,7 +206,8 @@ body.reduce-ui-motion *,body.reduce-ui-motion *:before,body.reduce-ui-motion *:a
     <div class="ui-actions"><button class="ui-done" data-action="close-ui">完成</button><button class="ui-reset" data-action="reset-ui">恢复默认</button></div>
   </div>
 </section>
-<section id="screen-pause" class="screen"><div class="modal"><div class="kicker">SYSTEM / PAUSED</div><h2>霓虹暂停</h2><p>比赛计时已冻结。继续驾驶，或回到车库升级你的车。</p><button data-action="resume">继续驾驶</button><button data-action="retry">重开本局</button><button data-action="menu">退出到主菜单</button></div></section>
+<section id="screen-pause" class="screen"><div class="modal"><div class="kicker">SYSTEM / PAUSED</div><h2>霓虹暂停</h2><p>比赛计时已冻结。继续驾驶，或回到车库升级你的车。</p><button data-action="resume">继续驾驶</button>
+      <button data-action="ui-settings">界面设置 / UI</button><button data-action="retry">重开本局</button><button data-action="menu">退出到主菜单</button></div></section>
 <section id="screen-results" class="screen"><div class="result-card"><div class="kicker" id="resKicker">RACE COMPLETE</div><h2 id="resTitle">第 1 名</h2><div class="result-stats" id="resStats"></div><div class="reward">CREDITS EARNED <b id="resReward">+0</b></div><div class="note" id="resNote"></div><button id="btnRetry" data-action="retry">再跑一局</button><button data-action="menu">返回主菜单</button></div></section>
 </div>
 
@@ -220,9 +224,10 @@ body.reduce-ui-motion *,body.reduce-ui-motion *:before,body.reduce-ui-motion *:a
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261022t" defer></script>
+<script src="./game.js?v=20261023u" defer></script>
 </body>
 </html>
+
 
 
 
