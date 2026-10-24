@@ -38,8 +38,12 @@ const MAPS={
   neon:{name:'霓虹湾',en:'NEON BAY',theme:'city',rampCenter:.56,checkpoints:[.24,.49,.74,0],points:[[0,0,0],[85,0,18],[150,1,80],[165,3,150],[125,6,210],[45,5,230],[-35,3,205],[-85,1,155],[-160,0,170],[-220,2,110],[-220,0,30],[-170,0,-35],[-85,0,-45],[-30,0,-15]]},
   port:{name:'铁潮港',en:'IRON TIDE',theme:'port',rampCenter:.53,checkpoints:[.235,.49,.745,0],points:[[0,0,0],[80,0,22],[165,1,70],[220,2,150],[210,3,235],[145,2,285],[55,1,275],[-20,0,225],[-85,1,250],[-150,1,205],[-195,1,130],[-175,0,55],[-105,0,5],[-35,0,-20]]}
 };
-const DEFAULT_PROFILE={credits:1600,selectedCar:0,upgrades:{kaze:{engine:0,tires:0,nitro:0},viper:{engine:0,tires:0,nitro:0},titan:{engine:0,tires:0,nitro:0}},best:{circuit:0,time:0,drift:0},settings:{night:true,rain:true,sound:true,quality:'auto',mouseDrive:false,uiTheme:'cyan',uiOpacity:.82,uiMinimap:true,uiMotion:true}};
-function loadProfile(){try{const s=JSON.parse(localStorage.getItem('nightshift.profile.v1')||'{}');return{...DEFAULT_PROFILE,...s,credits:Number(s.credits??1600),selectedCar:Number(s.selectedCar??0),upgrades:{...DEFAULT_PROFILE.upgrades,...(s.upgrades||{})},best:{...DEFAULT_PROFILE.best,...(s.best||{})},settings:{...DEFAULT_PROFILE.settings,...(s.settings||{})}};}catch(e){return JSON.parse(JSON.stringify(DEFAULT_PROFILE));}}
+const DEFAULT_CONTROL_LAYOUT={
+  left:{x:.08,y:.78},right:{x:.25,y:.78},hand:{x:.41,y:.63},brake:{x:.41,y:.84},gas:{x:.86,y:.78},nitro:{x:.68,y:.78}
+};
+const DEFAULT_CONTROLS_ENABLED={left:true,right:true,gas:true,brake:true,nitro:true,hand:true};
+const DEFAULT_PROFILE={credits:1600,selectedCar:0,upgrades:{kaze:{engine:0,tires:0,nitro:0},viper:{engine:0,tires:0,nitro:0},titan:{engine:0,tires:0,nitro:0}},best:{circuit:0,time:0,drift:0},settings:{night:true,rain:true,sound:true,quality:'auto',mouseDrive:false,uiTheme:'cyan',uiOpacity:.82,uiMinimap:true,uiMotion:true,controlsLayout:JSON.parse(JSON.stringify(DEFAULT_CONTROL_LAYOUT)),controlsEnabled:{...DEFAULT_CONTROLS_ENABLED},controlsOpacity:.9,controlsSize:1,controlsLocked:false,controlsSnap:true}};
+function loadProfile(){try{const s=JSON.parse(localStorage.getItem('nightshift.profile.v1')||'{}');return{...DEFAULT_PROFILE,...s,credits:Number(s.credits??1600),selectedCar:Number(s.selectedCar??0),upgrades:{...DEFAULT_PROFILE.upgrades,...(s.upgrades||{})},best:{...DEFAULT_PROFILE.best,...(s.best||{})},settings:{...DEFAULT_PROFILE.settings,...(s.settings||{}),controlsLayout:JSON.parse(JSON.stringify((s.settings&&s.settings.controlsLayout)||DEFAULT_CONTROL_LAYOUT)),controlsEnabled:{...DEFAULT_CONTROLS_ENABLED,...((s.settings&&s.settings.controlsEnabled)||{})}}};}catch(e){return JSON.parse(JSON.stringify(DEFAULT_PROFILE));}}
 function saveProfile(p){try{localStorage.setItem('nightshift.profile.v1',JSON.stringify(p));}catch(e){}}
 function statsFor(def,up){up=up||{engine:0,tires:0,nitro:0};return{topSpeed:def.top*(1+.045*up.engine),accel:def.accel*(1+.055*up.engine),grip:def.grip*(1+.07*up.tires),steer:def.steer*(1+.025*up.tires),brake:def.brake*(1+.05*up.tires),boostAccel:def.accel*.9*(1+.10*up.nitro),nitroMax:100*(1+.18*up.nitro)};}
 function upgradeCost(l){return 350+l*300;}
@@ -556,7 +560,7 @@ class World{
 class InputHub{
   constructor(){
     this.keys=new Set();
-    this.touch={left:false,right:false,accel:false,brake:false,nitro:false};
+    this.touch={left:false,right:false,accel:false,brake:false,nitro:false,hand:false};
     this.pointers=new Map();
     this.actions={camera:false,reset:false,pause:false,beam:false};
     this.bindKeyboard();this.bindTouch();
@@ -579,6 +583,7 @@ class InputHub{
       const el=$(id);if(!el)return;
       el.addEventListener('pointerdown',e=>{
         e.preventDefault();e.stopPropagation();
+        if(document.body.classList.contains('editing-controls'))return;
         if(this.pointers.has(e.pointerId))return;
         this.pointers.set(e.pointerId,{key,el});
         this.touch[key]=true;el.classList.add('down');
@@ -586,7 +591,7 @@ class InputHub{
         if(key==='nitro'&&navigator.vibrate)navigator.vibrate(10);
       },{passive:false});
     };
-    hold('#btnLeft','left');hold('#btnRight','right');hold('#btnGas','accel');hold('#btnBrake','brake');hold('#btnNitro','nitro');
+    hold('#btnLeft','left');hold('#btnRight','right');hold('#btnGas','accel');hold('#btnBrake','brake');hold('#btnNitro','nitro');hold('#btnHand','hand');
     const release=e=>{
       const rec=this.pointers.get(e.pointerId);if(!rec)return;
       this.pointers.delete(e.pointerId);this.touch[rec.key]=false;rec.el.classList.remove('down');
@@ -611,7 +616,7 @@ class InputHub{
   }
   resetTouch(){
     this.pointers.clear();
-    this.touch={left:false,right:false,accel:false,brake:false,nitro:false};
+    this.touch={left:false,right:false,accel:false,brake:false,nitro:false,hand:false};
     $$('#touch .down').forEach(el=>el.classList.remove('down'));
   }
   clearActions(){this.actions.camera=false;this.actions.reset=false;this.actions.pause=false;this.actions.beam=false;}
@@ -621,7 +626,7 @@ class InputHub{
       left:this.keys.has('ArrowLeft')||this.touch.left,
       right:this.keys.has('ArrowRight')||this.touch.right,
       accel:this.keys.has('ArrowUp')||this.touch.accel,
-      brake:this.keys.has('ArrowDown')||this.touch.brake,
+      brake:this.keys.has('ArrowDown')||this.touch.brake||this.touch.hand,
       nitro:this.keys.has('ShiftLeft')||this.keys.has('ShiftRight')||this.touch.nitro
     };
   }
@@ -919,16 +924,17 @@ class Race{
 }
 
 class Game{
- constructor(){this.profile=loadProfile();const lp=new URLSearchParams(location.search),rm=lp.get('map'),am=lp.get('auto');this.currentMap=MAPS[rm]?rm:'neon';this.selectedMap=this.currentMap;this.autoMode=MODES[am]?am:null;this.canvas=$('#game');this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:!matchMedia('(pointer:coarse)').matches,powerPreference:'high-performance'});this.renderer.shadowMap.enabled=false;this.renderer.setSize(innerWidth,innerHeight);this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));if('outputColorSpace'in this.renderer)this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.18;this.renderer.setClearColor(0x02030a,1);this.scene=new THREE.Scene();this.scene.fog=new THREE.FogExp2(0x0a0c1b,.00165);this.camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.08,900);this.scene.add(this.camera);this.input=new InputHub();this.sound=new Sound();this.track=new Track(this.scene,this.currentMap);this.world=new World(this.scene,this.track,this.renderer,this.currentMap);this.smoke=new Smoke(this.scene);this.boostSmoke=new Smoke(this.scene,0xff6a2e,.3,1.0);this.skidMarks=new SkidMarks(this.scene);this.sparks=new Sparks(this.scene);this.speedLines=new SpeedLines(this.camera);this.cameraRig=new CameraRig(this.camera);this.race=new Race(this);this.preview=null;this.state='menu';this.paused=false;this.showroomTime=0;this.highBeam=false;this.clock=new THREE.Clock();this.perfTime=0;this.perfFrames=0;this.mapClock=0;this.dpr=1;this.dprCap=1;this.lastMode='circuit';this.selectedMode=this.autoMode||'circuit';this.dynamicLow=false;this.sound.setEnabled(this.profile.settings.sound);this.bindUI();this.bindResize();this.bindOrientation();this.applyQuality(true);this.updateSettingsUI();this.applyUISettings();this.showMenu();if(this.autoMode){const auto=this.autoMode;this.autoMode=null;history.replaceState(null,'',location.pathname);this.startRace(auto);}this.animate();requestAnimationFrame(()=>{const b=$('#boot');b.classList.add('done');setTimeout(()=>b.style.display='none',520);});}
+ constructor(){this.profile=loadProfile();const lp=new URLSearchParams(location.search),rm=lp.get('map'),am=lp.get('auto');this.currentMap=MAPS[rm]?rm:'neon';this.selectedMap=this.currentMap;this.autoMode=MODES[am]?am:null;this.canvas=$('#game');this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:!matchMedia('(pointer:coarse)').matches,powerPreference:'high-performance'});this.renderer.shadowMap.enabled=false;this.renderer.setSize(innerWidth,innerHeight);this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));if('outputColorSpace'in this.renderer)this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.18;this.renderer.setClearColor(0x02030a,1);this.scene=new THREE.Scene();this.scene.fog=new THREE.FogExp2(0x0a0c1b,.00165);this.camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.08,900);this.scene.add(this.camera);this.input=new InputHub();this.sound=new Sound();this.track=new Track(this.scene,this.currentMap);this.world=new World(this.scene,this.track,this.renderer,this.currentMap);this.smoke=new Smoke(this.scene);this.boostSmoke=new Smoke(this.scene,0xff6a2e,.3,1.0);this.skidMarks=new SkidMarks(this.scene);this.sparks=new Sparks(this.scene);this.speedLines=new SpeedLines(this.camera);this.cameraRig=new CameraRig(this.camera);this.race=new Race(this);this.preview=null;this.state='menu';this.paused=false;this.showroomTime=0;this.highBeam=false;this.clock=new THREE.Clock();this.perfTime=0;this.perfFrames=0;this.mapClock=0;this.dpr=1;this.dprCap=1;this.lastMode='circuit';this.selectedMode=this.autoMode||'circuit';this.dynamicLow=false;this.sound.setEnabled(this.profile.settings.sound);this.bindUI();this.bindResize();this.bindOrientation();this.applyQuality(true);this.updateSettingsUI();this.applyUISettings();this.bindControlSettings();this.applyControlLayout();this.showMenu();if(this.autoMode){const auto=this.autoMode;this.autoMode=null;history.replaceState(null,'',location.pathname);this.startRace(auto);}this.animate();requestAnimationFrame(()=>{const b=$('#boot');b.classList.add('done');setTimeout(()=>b.style.display='none',520);});}
  bindUI(){document.addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;this.sound.unlock();if(btn.dataset.map){this.selectedMap=btn.dataset.map;this.renderModeSelect();this.sound.ui();return;}
       if(btn.dataset.uiTheme){this.profile.settings.uiTheme=btn.dataset.uiTheme;saveProfile(this.profile);this.applyUISettings();this.sound.ui();return;}
+      if(btn.dataset.controlPreset){this.setControlPreset(btn.dataset.controlPreset);return;}
       if(btn.dataset.mode){this.selectedMode=btn.dataset.mode;this.renderModeSelect();this.sound.ui();return;}
-      if(btn.dataset.race){this.startRace(btn.dataset.race);return;}if(btn.dataset.car!==undefined){this.profile.selectedCar=Number(btn.dataset.car);saveProfile(this.profile);this.replacePreview();this.renderGarage();this.sound.ui();return;}if(btn.dataset.upgrade){this.buyUpgrade(btn.dataset.upgrade);return;}if(btn.dataset.setting){this.toggleSetting(btn.dataset.setting);return;}const a=btn.dataset.action;if(!a)return;if(a==='garage')this.openGarage();else if(a==='menu')this.showMenu();else if(a==='pause')this.togglePause();else if(a==='resume')this.togglePause();else if(a==='camera')this.toggleCamera();else if(a==='beam')this.toggleBeam();else if(a==='start-mode')this.launchSelected();else if(a==='ui-settings')this.openUISettings();else if(a==='close-ui')this.closeUISettings();else if(a==='reset-ui')this.resetUISettings();else if(a==='retry')this.startRace(this.race.mode||this.lastMode);});this.canvas.addEventListener('pointerdown',()=>this.sound.unlock());
+      if(btn.dataset.race){this.startRace(btn.dataset.race);return;}if(btn.dataset.car!==undefined){this.profile.selectedCar=Number(btn.dataset.car);saveProfile(this.profile);this.replacePreview();this.renderGarage();this.sound.ui();return;}if(btn.dataset.upgrade){this.buyUpgrade(btn.dataset.upgrade);return;}if(btn.dataset.setting){this.toggleSetting(btn.dataset.setting);return;}const a=btn.dataset.action;if(!a)return;if(a==='garage')this.openGarage();else if(a==='menu')this.showMenu();else if(a==='pause')this.togglePause();else if(a==='resume')this.togglePause();else if(a==='camera')this.toggleCamera();else if(a==='beam')this.toggleBeam();else if(a==='start-mode')this.launchSelected();else if(a==='ui-settings')this.openUISettings();else if(a==='close-ui')this.closeUISettings();else if(a==='reset-ui')this.resetUISettings();else if(a==='controls-settings')this.openControlsSettings();else if(a==='save-controls')this.closeControlsSettings();else if(a==='reset-controls')this.resetControlLayout();else if(a==='toggle-layout-lock')this.toggleControlLock();else if(a==='toggle-edit-controls')this.toggleEditControls();else if(a==='retry')this.startRace(this.race.mode||this.lastMode);});this.canvas.addEventListener('pointerdown',()=>this.sound.unlock());
     const uop=$('#uiOpacity');if(uop)uop.addEventListener('input',e=>{this.profile.settings.uiOpacity=clamp(Number(e.target.value)/100,.5,1);this.applyUISettings();saveProfile(this.profile);});
     const umm=$('#uiMinimap');if(umm)umm.addEventListener('change',e=>{this.profile.settings.uiMinimap=!!e.target.checked;this.applyUISettings();saveProfile(this.profile);});
     const umo=$('#uiMotion');if(umo)umo.addEventListener('change',e=>{this.profile.settings.uiMotion=!!e.target.checked;this.applyUISettings();saveProfile(this.profile);});
   }
- bindResize(){window.addEventListener('resize',()=>{this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();this.renderer.setSize(innerWidth,innerHeight,false);this.applyQuality(false);});}
+ bindResize(){window.addEventListener('resize',()=>{this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();this.renderer.setSize(innerWidth,innerHeight,false);this.applyQuality(false);this.applyControlLayout();});}
  bindOrientation(){
     let retried=false;
     const tryLock=()=>{
@@ -967,6 +973,65 @@ class Game{
     $('#msModeIcon').innerHTML=info.icon;
     this.updateMenuStats();
   }
+  applyControlLayout(){
+    const st=this.profile.settings||{},layout=st.controlsLayout||DEFAULT_CONTROL_LAYOUT,enabled=st.controlsEnabled||DEFAULT_CONTROLS_ENABLED;
+    const op=clamp(Number(st.controlsOpacity??.9),.2,1),scale=clamp(Number(st.controlsSize??1),.8,1.3);
+    const compact=innerWidth<600||innerHeight>innerWidth;
+    const base={left:86,right:86,gas:84,brake:70,nitro:72,hand:64};
+    $$('#touch .hud-widget').forEach(el=>{
+      const key=el.dataset.control,size=Math.max(44,Math.round(base[key]*(compact?.72:1)*scale)),pos=layout[key]||DEFAULT_CONTROL_LAYOUT[key];
+      el.style.display=enabled[key]===false?'none':'block';el.style.width=el.style.height=size+'px';el.style.opacity=op;
+      const cx=clamp(pos.x*innerWidth,size/2+6,innerWidth-size/2-6),cy=clamp(pos.y*innerHeight,size/2+6,innerHeight-size/2-6);
+      el.style.left=cx+'px';el.style.top=cy+'px';
+    });
+    document.body.classList.toggle('layout-locked',!!st.controlsLocked);
+    this.renderControlSettings();
+  }
+  renderControlSettings(){
+    const st=this.profile.settings||{},en=st.controlsEnabled||DEFAULT_CONTROLS_ENABLED;
+    const ids={left:'#ctrlEnableLeft',right:'#ctrlEnableRight',gas:'#ctrlEnableGas',brake:'#ctrlEnableBrake',nitro:'#ctrlEnableNitro',hand:'#ctrlEnableHand'};
+    for(const k in ids){const el=$(ids[k]);if(el)el.checked=en[k]!==false;}
+    const o=$('#ctrlOpacity'),os=$('#ctrlOpacityValue'),z=$('#ctrlSize'),zs=$('#ctrlSizeValue'),lk=$('#btnLayoutLock'),ed=$('#btnEditControls'),sn=$('#ctrlSnap');
+    if(o)o.value=Math.round((st.controlsOpacity??.9)*100);if(os)os.textContent=Math.round((st.controlsOpacity??.9)*100)+'%';
+    if(z)z.value=Math.round((st.controlsSize??1)*100);if(zs)zs.textContent=Math.round((st.controlsSize??1)*100)+'%';
+    if(lk)lk.textContent=st.controlsLocked?'解锁布局':'锁定布局';
+    if(ed)ed.textContent='编辑模式：'+(document.body.classList.contains('editing-controls')?'开':'关');
+    if(sn)sn.checked=st.controlsSnap!==false;
+  }
+  bindControlSettings(){
+    const bindToggle=(id,key)=>{const el=$(id);if(el)el.addEventListener('change',e=>{this.profile.settings.controlsEnabled=this.profile.settings.controlsEnabled||{};this.profile.settings.controlsEnabled[key]=!!e.target.checked;this.applyControlLayout();saveProfile(this.profile);});};
+    bindToggle('#ctrlEnableLeft','left');bindToggle('#ctrlEnableRight','right');bindToggle('#ctrlEnableGas','gas');bindToggle('#ctrlEnableBrake','brake');bindToggle('#ctrlEnableNitro','nitro');bindToggle('#ctrlEnableHand','hand');
+    const o=$('#ctrlOpacity');if(o)o.addEventListener('input',e=>{this.profile.settings.controlsOpacity=clamp(Number(e.target.value)/100,.2,1);this.applyControlLayout();saveProfile(this.profile);});
+    const z=$('#ctrlSize');if(z)z.addEventListener('input',e=>{this.profile.settings.controlsSize=clamp(Number(e.target.value)/100,.8,1.3);this.applyControlLayout();saveProfile(this.profile);});
+    const sn=$('#ctrlSnap');if(sn)sn.addEventListener('change',e=>{this.profile.settings.controlsSnap=!!e.target.checked;saveProfile(this.profile);});
+    $$('#touch .hud-widget').forEach(el=>el.addEventListener('pointerdown',e=>{
+      if(!document.body.classList.contains('editing-controls')||this.profile.settings.controlsLocked)return;
+      e.preventDefault();e.stopPropagation();
+      const key=el.dataset.control,rect=el.getBoundingClientRect(),offX=e.clientX-(rect.left+rect.width/2),offY=e.clientY-(rect.top+rect.height/2),id=e.pointerId,snap=this.profile.settings.controlsSnap!==false?10:1;
+      try{el.setPointerCapture(id);}catch(err){}el.classList.add('dragging');
+      const move=ev=>{if(ev.pointerId!==id)return;ev.preventDefault();const sz=el.offsetWidth;let cx=clamp(ev.clientX-offX,sz/2+6,innerWidth-sz/2-6),cy=clamp(ev.clientY-offY,sz/2+6,innerHeight-sz/2-6);if(snap>1){cx=clamp(Math.round(cx/snap)*snap,sz/2+6,innerWidth-sz/2-6);cy=clamp(Math.round(cy/snap)*snap,sz/2+6,innerHeight-sz/2-6);}el.style.left=cx+'px';el.style.top=cy+'px';this.profile.settings.controlsLayout=this.profile.settings.controlsLayout||{};this.profile.settings.controlsLayout[key]={x:cx/innerWidth,y:cy/innerHeight};};
+      const up=ev=>{if(ev.pointerId!==id)return;el.classList.remove('dragging');window.removeEventListener('pointermove',move,true);window.removeEventListener('pointerup',up,true);window.removeEventListener('pointercancel',up,true);saveProfile(this.profile);};window.addEventListener('pointermove',move,{capture:true,passive:false});window.addEventListener('pointerup',up,{capture:true});window.addEventListener('pointercancel',up,{capture:true});
+    },{capture:true,passive:false}));
+  }
+  openControlsSettings(){
+    this.controlsReturn=(document.querySelector('.screen.active')||{}).id||'screen-pause';
+    if(this.state==='race'&&!this.paused){this.paused=true;document.body.classList.add('paused');}
+    this.input.resetTouch();this.input.clearActions();document.body.classList.add('control-settings-open','editing-controls');this.showScreen('screen-controls');this.applyControlLayout();this.renderControlSettings();
+  }
+  closeControlsSettings(){
+    document.body.classList.remove('control-settings-open','editing-controls');this.input.resetTouch();saveProfile(this.profile);this.applyControlLayout();
+    if(this.state==='race'){document.body.classList.add('paused');this.showScreen('screen-pause');}else this.showScreen(this.controlsReturn||'screen-menu');
+  }
+  setControlPreset(hand){
+    const right={left:{x:.08,y:.78},right:{x:.25,y:.78},hand:{x:.41,y:.63},brake:{x:.41,y:.84},gas:{x:.86,y:.78},nitro:{x:.68,y:.78}};
+    const left={left:{x:.77,y:.79},right:{x:.90,y:.79},hand:{x:.62,y:.86},brake:{x:.34,y:.82},gas:{x:.16,y:.79},nitro:{x:.21,y:.60}};
+    this.profile.settings.controlsLayout=hand==='left'?left:right;this.applyControlLayout();saveProfile(this.profile);this.sound.ui();
+  }
+  resetControlLayout(){
+    this.profile.settings.controlsLayout=JSON.parse(JSON.stringify(DEFAULT_CONTROL_LAYOUT));this.profile.settings.controlsEnabled={...DEFAULT_CONTROLS_ENABLED};this.profile.settings.controlsOpacity=.9;this.profile.settings.controlsSize=1;this.profile.settings.controlsLocked=false;this.applyControlLayout();saveProfile(this.profile);this.sound.ui();
+  }
+  toggleControlLock(){this.profile.settings.controlsLocked=!this.profile.settings.controlsLocked;this.applyControlLayout();saveProfile(this.profile);this.sound.ui();}
+  toggleEditControls(){document.body.classList.toggle('editing-controls');this.renderControlSettings();this.sound.ui();}
   applyUISettings(){
     const st=this.profile.settings||{},theme=st.uiTheme||'cyan',a=clamp(Number(st.uiOpacity??.82),.5,1);
     document.body.dataset.uiTheme=theme;document.body.style.setProperty('--panel-alpha',a.toFixed(2));document.body.style.setProperty('--panel-alpha2',Math.max(.5,a-.12).toFixed(2));
