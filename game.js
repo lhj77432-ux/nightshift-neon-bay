@@ -378,6 +378,20 @@ class World{
       for(let i=0;i<items.length;i++){const b=items[i];dummy.position.set(b.x,0,b.z);dummy.rotation.set(0,b.rot,0);dummy.scale.set(b.w,b.h,b.d);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);const walls=[0x7d8795,0x9b9281,0x496984,0x507e84];col.setHex(walls[i%4]);col.offsetHSL(0,0,(r()-.5)*.12);mesh.setColorAt(i,col);}
       mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;this.scene.add(mesh);this.buildingMeshes.push(mesh);
     }
+    const detailGeo=new THREE.BoxGeometry(1,1,1);detailGeo.translate(0,.5,0);
+    const detailMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.46,metalness:.42,emissive:0x0a1522,emissiveIntensity:.36});
+    const detail=new THREE.InstancedMesh(detailGeo,detailMat,Math.max(1,count*2)),bandGeo=new THREE.BoxGeometry(1,1,1);bandGeo.translate(0,.5,0);
+    const band=new THREE.InstancedMesh(bandGeo,new THREE.MeshBasicMaterial({color:0xffffff}),Math.max(1,count*3));let di=0,bi=0;
+    const baseColors=[0x111a28,0x172230,0x0e1a23],crownColors=[0x2b4658,0x3c4856,0x20384a],bandColors=[0xffb15b,0x39f4ff,0xff2f88,0xd6ff3f];
+    for(let i=0;i<count;i++){
+      const b=data[i],r1=mulberry32(8800+i),crownH=2.2+r1()*4.2;
+      dummy.rotation.set(0,b.rot,0);dummy.position.set(b.x,0,b.z);dummy.scale.set(b.w*1.018,4.8+(i%3)*1.25,b.d*1.018);dummy.updateMatrix();detail.setMatrixAt(di,dummy.matrix);col.setHex(baseColors[i%3]);detail.setColorAt(di,col);di++;
+      dummy.position.set(b.x,b.h,b.z);dummy.scale.set(b.w*.66,crownH,b.d*.66);dummy.updateMatrix();detail.setMatrixAt(di,dummy.matrix);col.setHex(crownColors[(i+1)%3]);detail.setColorAt(di,col);di++;
+      dummy.position.set(b.x,2.8,b.z);dummy.scale.set(b.w*1.04,.16,b.d*1.04);dummy.updateMatrix();band.setMatrixAt(bi,dummy.matrix);col.setHex(bandColors[i%4]);band.setColorAt(bi,col);bi++;
+      dummy.position.set(b.x,b.h*.56,b.z);dummy.scale.set(b.w*1.04,.075,b.d*1.04);dummy.updateMatrix();band.setMatrixAt(bi,dummy.matrix);col.setHex(bandColors[(i+1)%4]);band.setColorAt(bi,col);bi++;
+      dummy.position.set(b.x,b.h+crownH+.04,b.z);dummy.scale.set(b.w*.67,.075,b.d*.67);dummy.updateMatrix();band.setMatrixAt(bi,dummy.matrix);col.setHex(bandColors[(i+2)%4]);band.setColorAt(bi,col);bi++;
+    }
+    detail.count=di;band.count=bi;detail.instanceMatrix.needsUpdate=true;band.instanceMatrix.needsUpdate=true;if(detail.instanceColor)detail.instanceColor.needsUpdate=true;if(band.instanceColor)band.instanceColor.needsUpdate=true;
     const trim=new THREE.InstancedMesh(new THREE.BoxGeometry(1,.14,1),new THREE.MeshBasicMaterial({color:0xffffff}),count);
     const acCount=Math.floor(count/2),ac=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),new THREE.MeshStandardMaterial({color:0x19263a,metalness:.5,roughness:.62,emissive:0x0b2638,emissiveIntensity:.3}),acCount);ac.geometry.translate(0,.5,0);
     const antennaCount=Math.ceil(count/3),antGeo=new THREE.CylinderGeometry(.06,.12,7,5);antGeo.translate(0,3.5,0);const ant=new THREE.InstancedMesh(antGeo,new THREE.MeshStandardMaterial({color:0x1c2636,metalness:.75,roughness:.35}),antennaCount);
@@ -394,7 +408,7 @@ class World{
     const edgeCount=Math.max(1,data.length*2),edge=new THREE.InstancedMesh(new THREE.BoxGeometry(.085,1,.085),new THREE.MeshBasicMaterial({color:0xffffff}),edgeCount),edgeColors=[0xff2f88,0x39f4ff,0xff9e45];let ei=0;
     for(let i=0;i<data.length;i++){const b=data[i],c=Math.cos(b.rot),s=Math.sin(b.rot);for(const sx of[-1,1]){const lx=sx*b.w*.51,px=b.x+lx*c,pz=b.z-lx*s;dummy.position.set(px,b.h*.45,pz);dummy.rotation.set(0,b.rot,0);dummy.scale.set(1,b.h*.86,1);dummy.updateMatrix();edge.setMatrixAt(ei,dummy.matrix);col.setHex(edgeColors[(i+(sx>0?1:0))%3]);edge.setColorAt(ei,col);ei++;}}
     edge.count=ei;edge.instanceMatrix.needsUpdate=true;if(edge.instanceColor)edge.instanceColor.needsUpdate=true;
-    this.cityDetails=new THREE.Group();this.cityDetails.add(trim,ac,ant,beacons,this.adGlow,edge);this.scene.add(this.cityDetails);this.buildingData=data;
+    this.cityDetails=new THREE.Group();this.cityDetails.add(trim,ac,ant,beacons,this.adGlow,edge,detail,band);this.buildingDetails={struct:detail,bands:band};this.scene.add(this.cityDetails);this.buildingData=data;
     
   }
   buildLandmarks(){
