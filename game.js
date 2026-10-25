@@ -365,13 +365,19 @@ class World{
     const textures=[0,1,2,3].map(makeWindowTex);
     this.buildingMats=textures.map(t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping;return new THREE.MeshStandardMaterial({map:t,emissiveMap:t,emissive:0xffffff,emissiveIntensity:1.15,color:0xffffff,roughness:.62,metalness:.27});});
     const target=this.mapKey==='port'?105:180,r=mulberry32(91273),data=[];let tries=0;
+    if(this.mapKey==='neon'){
+      const core=[[260,118,18,18,126,.08],[190,70,14,14,76,-.22],[330,70,15,15,92,.31],[190,166,13,13,68,.44],[330,166,14,14,80,-.37],[260,63,11,11,56,.12],[260,174,11,11,62,-.18],[120,112,10,10,54,.28],[400,112,11,11,72,-.26],[130,86,9,9,46,.6],[390,148,10,10,60,-.52],[215,103,11,11,98,.18],[305,132,12,12,88,-.2],[150,145,9,9,50,.35],[370,90,9,9,52,-.4],[235,145,8,8,47,.7],[285,90,8,8,49,-.66]];
+      for(const [x,z,w,d,h,rot] of core){if(this.track.clearFootprint(x,z,w,d,rot,9))data.push({x,z,w,d,h,rot,variant:data.length%4,infield:true});}
+    }
     while(data.length<target&&tries<target*18){
       tries++;
       const ss=this.track.samples[(Math.floor(r()*this.track.N))%this.track.N],sign=r()>.5?1:-1,off=this.track.halfWidth+16+r()*62,p=ss.p.clone().addScaledVector(ss.side,sign*off).addScaledVector(ss.t,(r()-.5)*26),w=5+r()*10,d=5+r()*10,h=this.mapKey==='port'?9+r()*r()*50:20+r()*r()*105,rot=r()*Math.PI;
       if(this.mapKey==='neon'&&p.z<8)continue;
+      if(data.some(b=>Math.hypot(p.x-b.x,p.z-b.z)<Math.hypot(w+b.w,d+b.d)*.44))continue;
       if(!this.track.clearFootprint(p.x,p.z,w,d,rot,3.2))continue;
       data.push({x:p.x,z:p.z,w,h,d,rot,variant:data.length%4});
     }
+    this.infieldBuildings=this.mapKey==='neon'?data.filter(b=>b.infield):[];
     const count=data.length;
     const dummy=new THREE.Object3D(),col=new THREE.Color();this.buildingMeshes=[];
     for(let v=0;v<4;v++){
