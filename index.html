@@ -98,7 +98,7 @@ body.editing-controls .hud-widget.dragging{outline:3px solid var(--cyan);z-index
 @media(orientation:portrait){#screen-menu.active{overflow:auto;padding:12px}.ms-brand span{display:none}.ms-brand strong{font-size:20px}.ms-top{flex:0 0 auto}.ms-main{display:block;padding:13px 0}.ms-left h1{font-size:42px}.ms-sub{display:none}.mode-list{grid-template-columns:1fr;gap:7px;margin-bottom:12px}.mode-card{min-height:66px;display:grid;grid-template-columns:32px 1fr;grid-template-rows:auto auto}.mc-icon{grid-row:1/3;margin:0 8px 0 0;width:30px;height:30px}.mode-card b{font-size:17px}.mode-card small{font-size:7px}.mode-card em{display:none}.mc-index{top:8px;right:9px}.ms-detail{padding:14px}.ms-mode-icon{width:38px;height:38px;margin:6px 0}.ms-detail h2{font-size:30px}.ms-detail p{font-size:10px;min-height:0}.ms-footer{margin-top:8px}.ms-foot-label{display:none}}
 .ms-track-label{font-size:8px;letter-spacing:.18em;color:#73839c;margin:0 0 6px}
 .track-picker{display:flex;gap:7px;margin:0 0 12px}
-.track-chip{flex:1;min-height:44px;padding:5px 8px;text-align:left;border:1px solid rgba(255,255,255,.14);background:rgba(8,14,25,.72);pointer-events:auto;transition:.16s;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}.track-chip b{display:block;font-size:11px;color:#dce8f7}.track-chip small{display:block;font-size:7px;letter-spacing:.14em;color:#7588a2;margin-top:2px}.track-chip.selected{border-color:var(--mode);background:color-mix(in srgb,var(--mode) 13%,rgba(7,13,23,.9));box-shadow:inset 0 0 16px color-mix(in srgb,var(--mode) 9%,transparent)}.track-chip.selected small{color:var(--mode)}
+.track-chip{flex:1;min-height:44px;padding:5px 8px;text-align:left;border:1px solid rgba(255,255,255,.14);background:rgba(8,14,25,.72);pointer-events:auto;transition:.16s;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}.track-chip b{display:block;font-size:9px;color:#dce8f7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track-chip small{display:block;font-size:6px;letter-spacing:.08em;color:#7588a2;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track-chip.selected{border-color:var(--mode);background:color-mix(in srgb,var(--mode) 13%,rgba(7,13,23,.9));box-shadow:inset 0 0 16px color-mix(in srgb,var(--mode) 9%,transparent)}.track-chip.selected small{color:var(--mode)}
 @media(max-width:1000px) and (orientation:landscape){.ms-track-label{font-size:6px;margin-bottom:2px}.track-picker{gap:5px;margin-bottom:5px}.track-chip{min-height:44px;padding:4px 5px}.track-chip b{font-size:9px}.track-chip small{font-size:6px;margin-top:0}.ms-detail .ms-meta{margin-bottom:4px}.ms-ride{display:none}.ms-detail p{margin-bottom:5px}.ms-mode-icon{margin:5px 0}.ms-garage{min-height:34px}}
 body{--panel-alpha:.82;--panel-alpha2:.70}
 body[data-ui-theme="cyan"]{--acid:#d6ff3f;--cyan:#39f4ff;--pink:#ff2f88}
@@ -173,9 +173,12 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
       <div id="msModeMeta" class="ms-meta"><span>2 LAPS</span><span>4 CARS</span><span> 2:30</span></div>
       <div class="ms-track-label">TRACK / 地图</div>
       <div class="track-picker">
-        <button class="track-chip selected" data-map="neon"><b>维港霓虹</b><small>VICTORIA HARBOUR</small></button>
+        <button class="track-chip selected" data-map="neon"><b>维港霓虹</b><small>VICTORIA</small></button>
         <button class="track-chip" data-map="port"><b>铁潮港</b><small>IRON TIDE</small></button>
-      </div>
+        <button class="track-chip" data-map="kowloon"><b>九龙脉搏</b><small>KOWLOON</small></button>
+        <button class="track-chip" data-map="peak"><b>太平山道</b><small>PEAK RUN</small></button>
+        <button class="track-chip" data-map="terminal"><b>葵涌货柜</b><small>KWAI CHUNG</small></button>
+        </div>
       <button class="ms-start" data-action="start-mode"><span>开始比赛</span><b></b></button>
       <button class="ms-garage" data-action="garage">车库与调校 / GARAGE</button>
       <div class="ms-ride"><small>CURRENT RIDE</small><b id="menuCar"></b></div>
@@ -263,9 +266,10 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261025peaks" defer></script>
+<script src="./game.js?v=20261025ad" defer></script>
 </body>
 </html>
+
 
 
 
