@@ -16,7 +16,27 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:no
 .screen{position:absolute;inset:0;display:none;pointer-events:none}.screen.active{display:block}
 #screen-garage.active,#screen-pause.active,#screen-results.active{pointer-events:auto}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:none;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:2px solid var(--acid);outline-offset:3px}button:disabled{opacity:.38;cursor:not-allowed}
-#screen-menu{background:linear-gradient(90deg,rgba(3,5,12,.97) 0%,rgba(3,5,12,.82) 34%,rgba(3,5,12,.18) 64%,transparent 82%)}
+#screen-auth.active{display:flex;align-items:center;justify-content:center;pointer-events:auto;background:linear-gradient(105deg,rgba(3,6,14,.96),rgba(3,6,14,.72) 55%,rgba(3,6,14,.4))}
+.auth-card{width:min(440px,calc(100% - 28px));padding:22px 18px 16px;border:1px solid rgba(57,244,255,.5);background:rgba(6,12,20,.92);box-shadow:0 0 40px rgba(57,244,255,.12);pointer-events:auto}
+.auth-card h1{margin:8px 0 6px;font-size:40px;letter-spacing:.12em}
+.auth-card p{margin:0 0 12px;color:#9eb0c4;font-size:13px;line-height:1.45}
+.auth-tabs{display:flex;gap:8px;margin-bottom:8px}
+.auth-tabs button{flex:1;min-height:42px;border:1px solid rgba(255,255,255,.16);font-weight:800;letter-spacing:.08em}
+.auth-tabs button.on{background:var(--cyan);color:#041016;border-color:var(--cyan)}
+.auth-card label{display:block;margin:10px 0 4px;font-size:10px;letter-spacing:.14em;color:#8ea0b4}
+.auth-card input{width:100%;min-height:46px;padding:0 12px;border:1px solid rgba(57,244,255,.45);background:#071018;color:#f4f7ff;font:inherit;font-size:16px;pointer-events:auto;touch-action:auto;user-select:text;-webkit-user-select:text}
+.auth-go{width:100%;min-height:48px;margin-top:14px;background:var(--cyan);color:#041016;font-weight:900;letter-spacing:.16em}
+.auth-msg{min-height:18px;color:#ffb4c8;font-size:12px}
+.room-box{margin-top:10px}
+.room-join{display:flex;gap:6px;margin-top:6px}
+.room-join input,.room-box button{pointer-events:auto;touch-action:auto}
+.room-join input{flex:1;min-width:0;min-height:42px;border:1px solid rgba(57,244,255,.45);background:#071018;color:#fff;font:inherit;font-size:18px;letter-spacing:.18em;text-align:center;user-select:text;-webkit-user-select:text}
+.room-join button,.room-leave{min-height:42px;padding:0 12px;border:1px solid var(--cyan);color:var(--cyan);font-weight:800}
+.room-create{width:100%;min-height:42px;border:1px solid var(--acid);color:var(--acid);font-weight:800}
+.room-code{display:block;margin:4px 0;font-size:32px;letter-spacing:.28em;color:var(--cyan)}
+#roomPlayers{list-style:none;margin:0 0 8px;padding:0;font-size:13px;color:#d5e4f2}
+#roomStatus{min-height:16px;margin:6px 0 0;font-size:12px;color:#9eb0c4}
+#menuUser{display:block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--cyan)}
 .menu-wrap{position:absolute;inset:0;padding:clamp(20px,4vw,64px);display:flex;overflow:auto}.menu-copy{width:min(720px,56vw);margin-top:auto;margin-bottom:auto;pointer-events:auto}
 .eyebrow,.kicker{font-size:11px;letter-spacing:.26em;color:var(--acid);font-weight:800;text-transform:uppercase}
 .logo{font-size:clamp(68px,10.4vw,156px);line-height:.78;font-weight:1000;letter-spacing:-.075em;font-style:italic;text-shadow:0 0 42px rgba(57,244,255,.18);margin:16px 0 0}.logo span{color:var(--acid)}
@@ -133,9 +153,30 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
 <body>
 <canvas id="game"></canvas><div id="vignette"></div><div id="grade"></div>
 <div id="ui">
-<section id="screen-menu" class="screen active">
+<section id="screen-auth" class="screen active">
+  <form class="auth-card" id="authForm">
+    <div class="kicker">NIGHTSHIFT / GATE</div>
+    <h1>进场</h1>
+    <p id="authLead">用邮箱注册或登录。密码不改的话就是 12345678。</p>
+    <div class="auth-tabs">
+      <button type="button" class="on" data-auth="login">登录</button>
+      <button type="button" data-auth="register">注册</button>
+      <button type="button" data-auth="pass">改密码</button>
+    </div>
+    <label for="authEmail">邮箱</label>
+    <input id="authEmail" type="email" autocomplete="username" inputmode="email" placeholder="name@mail.com">
+    <label for="authPass" id="authPassLabel">密码</label>
+    <input id="authPass" type="text" autocomplete="current-password" value="12345678">
+    <label for="authNew" id="authNewLabel" hidden>新密码</label>
+    <input id="authNew" type="text" autocomplete="new-password" placeholder="至少 6 位" hidden>
+    <button class="auth-go" type="submit" id="authGo">登录</button>
+    <p class="auth-msg" id="authMsg"></p>
+  </form>
+</section>
+<section id="screen-menu" class="screen">
   <header class="ms-top">
-    <div class="ms-brand"><strong>NIGHTSHIFT</strong><span>NEON BAY / RACE CONTROL</span></div>
+    <div class="ms-brand"><strong>NIGHTSHIFT</strong><span>NEON BAY / RACE CONTROL</span><b id="menuUser"></b></div>
+    <button class="ms-ui-btn" data-action="logout"><span>OUT</span> 退出</button>
     <button class="ms-ui-btn" data-action="ui-settings"><span>UI</span> 界面设置</button>
     <div class="ms-res">
       <div><small>CREDITS</small><b id="menuCredits">0 CR</b></div>
@@ -180,6 +221,19 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
         <button class="track-chip" data-map="terminal"><b>葵涌货柜</b><small>KWAI CHUNG</small></button>
         </div>
       <button class="ms-start" data-action="start-mode"><span>开始比赛</span><b></b></button>
+      <div class="room-box" id="roomBox">
+        <div class="ms-track-label">ROOM / 好友房间</div>
+        <div id="roomIdle">
+          <button class="room-create" type="button" data-action="create-room">创建房间</button>
+          <div class="room-join"><input id="roomCodeInput" inputmode="numeric" maxlength="4" placeholder="房间号"><button type="button" data-action="join-room">加入</button></div>
+        </div>
+        <div id="roomLive" hidden>
+          <b class="room-code" id="roomCode">0000</b>
+          <ul id="roomPlayers"></ul>
+          <button class="room-leave" type="button" data-action="leave-room">离开房间</button>
+        </div>
+        <p id="roomStatus"></p>
+      </div>
       <button class="ms-garage" data-action="garage">车库与调校 / GARAGE</button>
       <div class="ms-ride"><small>CURRENT RIDE</small><b id="menuCar"></b></div>
     </aside>
@@ -266,7 +320,8 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./game.js?v=20261026pickups" defer></script>
+<script src="./lobby.js?v=20261026room" defer></script>
+<script src="./game.js?v=20261026room" defer></script>
 </body>
 </html>
 
