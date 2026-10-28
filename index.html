@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,viewport-fit=cover,user-scalable=no">
+<script>if((matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0)&&innerHeight>innerWidth+40)document.documentElement.classList.add('force-landscape');</script>
 <meta name="theme-color" content="#05060c">
 <title>NIGHTSHIFT / 霓虹湾</title>
 <style>
@@ -148,6 +149,23 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
 .ctrl-presets .edit-toggle{border-color:var(--acid);color:var(--acid);font-weight:900}
 .ctrl-snap{display:flex;align-items:center;gap:5px;min-height:42px;padding:0 7px;border:1px solid rgba(255,255,255,.15);background:rgba(8,14,24,.82);font-size:9px;color:#aab8cd;cursor:pointer}
 .ctrl-snap input{width:16px;height:16px;accent-color:var(--cyan)}
+html.force-landscape body{position:fixed;top:0;margin:0;width:100dvh;height:100dvw;left:100dvw;transform:rotate(90deg);transform-origin:left top;overflow:hidden;background:#05060c}
+html.force-landscape #screen-menu.active{overflow:hidden;padding:8px 12px}
+html.force-landscape .ms-main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(200px,.72fr);padding:4px 0}
+html.force-landscape .ms-left h1{font-size:clamp(28px,4.2vw,42px);margin:2px 0 4px}
+html.force-landscape .ms-sub{display:none}
+html.force-landscape .mode-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}
+html.force-landscape .mode-card{display:block;min-height:68px;padding:8px}
+html.force-landscape .mode-card em{display:block}
+html.force-landscape .mc-icon{grid-row:auto;margin:0 0 4px;width:26px;height:26px}
+html.force-landscape .ms-detail{padding:8px 10px}
+html.force-landscape .ms-mode-icon{width:32px;height:32px;margin:4px 0}
+html.force-landscape .ms-detail h2{font-size:22px}
+html.force-landscape .ms-detail p{font-size:10px;min-height:0;margin:4px 0 6px}
+html.force-landscape .track-picker{margin-bottom:4px}
+html.force-landscape .track-chip{min-height:36px}
+html.force-landscape .ms-start{min-height:40px;font-size:13px}
+html.force-landscape .ms-ride{display:none}
 </style>
 </head>
 <body>
@@ -322,7 +340,7 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
 <script src="./lobby.js?v=20261026room" defer></script>
-<script src="./game.js?v=20261027straight" defer></script>
+<script src="./game.js?v=20261028land" defer></script>
 </body>
 </html>
 
