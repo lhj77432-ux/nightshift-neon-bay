@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,viewport-fit=cover,user-scalable=no">
-<script>if((matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0)&&innerHeight>innerWidth+40)document.documentElement.classList.add('force-landscape');</script>
+<script>if((matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0)&&innerHeight>innerWidth+40)document.documentElement.classList.add('force-landscape');if((innerHeight>innerWidth+40&&(matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0)?innerWidth:innerHeight)<520)document.documentElement.classList.add('compact-stage');</script>
 <meta name="theme-color" content="#05060c">
 <title>NIGHTSHIFT / 霓虹湾</title>
 <style>
@@ -150,22 +150,63 @@ body.layout-locked.editing-controls .drag-handle{color:#667085;border-color:#667
 .ctrl-snap{display:flex;align-items:center;gap:5px;min-height:42px;padding:0 7px;border:1px solid rgba(255,255,255,.15);background:rgba(8,14,24,.82);font-size:9px;color:#aab8cd;cursor:pointer}
 .ctrl-snap input{width:16px;height:16px;accent-color:var(--cyan)}
 html.force-landscape body{position:fixed;top:0;margin:0;width:100dvh;height:100dvw;left:100dvw;transform:rotate(90deg);transform-origin:left top;overflow:hidden;background:#05060c}
-html.force-landscape #screen-menu.active{overflow:hidden;padding:8px 12px}
-html.force-landscape .ms-main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(200px,.72fr);padding:4px 0}
-html.force-landscape .ms-left h1{font-size:clamp(28px,4.2vw,42px);margin:2px 0 4px}
-html.force-landscape .ms-sub{display:none}
-html.force-landscape .mode-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}
-html.force-landscape .mode-card{display:block;min-height:68px;padding:8px}
-html.force-landscape .mode-card em{display:block}
-html.force-landscape .mc-icon{grid-row:auto;margin:0 0 4px;width:26px;height:26px}
-html.force-landscape .ms-detail{padding:8px 10px}
-html.force-landscape .ms-mode-icon{width:32px;height:32px;margin:4px 0}
-html.force-landscape .ms-detail h2{font-size:22px}
-html.force-landscape .ms-detail p{font-size:10px;min-height:0;margin:4px 0 6px}
-html.force-landscape .track-picker{margin-bottom:4px}
-html.force-landscape .track-chip{min-height:36px}
-html.force-landscape .ms-start{min-height:40px;font-size:13px}
-html.force-landscape .ms-ride{display:none}
+html.compact-stage #screen-auth.active{padding:8px;align-items:stretch}
+html.compact-stage .auth-card{width:min(420px,calc(100% - 12px));max-height:100%;overflow:auto;margin:auto;padding:8px 12px 6px}
+html.compact-stage .auth-card h1{font-size:26px;margin:2px 0}
+html.compact-stage .auth-card p{font-size:11px;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.compact-stage .auth-tabs{margin-bottom:2px}
+html.compact-stage .auth-tabs button{min-height:34px}
+html.compact-stage .auth-card label{margin:4px 0 2px}
+html.compact-stage .auth-card input{min-height:36px}
+html.compact-stage .auth-go{min-height:38px;margin-top:8px}
+html.compact-stage #screen-menu.active{overflow:auto;padding:6px 8px}
+html.compact-stage .ms-top{gap:8px}
+html.compact-stage .ms-brand span{display:none}
+html.compact-stage .ms-brand strong{font-size:16px}
+html.compact-stage .ms-ui-btn{min-height:32px;padding:0 8px}
+html.compact-stage .ms-res{gap:8px}
+html.compact-stage .ms-res b{font-size:12px}
+html.compact-stage .ms-main{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(230px,.95fr);gap:8px;padding:4px 0;min-height:0}
+html.compact-stage .eyebrow,html.compact-stage .ms-sub,html.compact-stage .ms-left h1 span,html.compact-stage .ms-ride,html.compact-stage .ms-mode-icon,html.compact-stage .ms-foot-label,html.compact-stage .mc-index,html.compact-stage .mode-card em,html.compact-stage .ms-detail p{display:none}
+html.compact-stage .ms-left h1{font-size:22px;margin:0 0 6px}
+html.compact-stage .mode-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}
+html.compact-stage .mode-card{display:flex;flex-direction:column;justify-content:center;min-height:64px;height:auto;padding:8px}
+html.compact-stage .mc-icon{grid-row:auto;width:22px;height:22px;margin:0 0 4px}
+html.compact-stage .mode-card b{font-size:14px}
+html.compact-stage .mode-card small{font-size:9px;margin-top:2px}
+html.compact-stage .ms-detail{padding:8px;min-height:0;justify-content:flex-start}
+html.compact-stage .ms-detail h2{font-size:18px}
+html.compact-stage .ms-meta{margin-bottom:4px}
+html.compact-stage .ms-track-label{margin-bottom:3px}
+html.compact-stage .track-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:0 0 6px}
+html.compact-stage .track-chip{min-height:38px;padding:4px 6px}
+html.compact-stage .track-chip b{font-size:12px}
+html.compact-stage .track-chip small{font-size:8px}
+html.compact-stage .ms-start{min-height:38px;font-size:14px;padding:0 10px}
+html.compact-stage .ms-start b{font-size:16px}
+html.compact-stage .room-box{margin-top:4px}
+html.compact-stage .room-create,html.compact-stage .room-join input,html.compact-stage .room-join button,html.compact-stage .ms-garage{min-height:32px}
+html.compact-stage .ms-garage{margin-top:4px;font-size:10px}
+html.compact-stage .ms-footer{gap:4px}
+html.compact-stage #screen-menu .pill{min-height:28px;padding:3px 8px;font-size:10px}
+html.compact-stage .ms-footer .pill[data-action="ui-settings"]{display:none}
+html.compact-stage .hud-top{top:6px;left:8px;right:8px}
+html.compact-stage .hud-card{min-width:0;padding:5px 8px}
+html.compact-stage .bigline{font-size:14px}
+html.compact-stage #hudTimer{font-size:16px}
+html.compact-stage .map-card{width:74px;height:74px}
+html.compact-stage .mini-actions button{min-width:36px;min-height:30px;font-size:8px}
+html.compact-stage .hud-speed{left:10px;right:auto;top:70px;bottom:auto;text-align:left}
+html.compact-stage .speed-line,html.compact-stage .nitro-wrap,html.compact-stage .gear-line{justify-content:flex-start}
+html.compact-stage .speed-line b{font-size:34px}
+html.compact-stage .nitro-track{width:70px}
+html.compact-stage .modal,html.compact-stage .result-card{padding:12px;max-height:calc(100% - 16px);overflow:auto}
+html.compact-stage .modal h2,html.compact-stage .result-card h2{font-size:28px;margin:4px 0 8px}
+html.compact-stage .modal p{margin-bottom:8px}
+html.compact-stage .modal button,html.compact-stage .result-card button{min-height:40px}
+html.compact-stage .control-modal{max-height:58%;top:4px}
+html.compact-stage .garage-head h2{font-size:26px}
+html.compact-stage .car-card{min-height:72px}
 </style>
 </head>
 <body>
@@ -340,7 +381,7 @@ html.force-landscape .ms-ride{display:none}
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
 <script src="./lobby.js?v=20261026room" defer></script>
-<script src="./game.js?v=20261028land" defer></script>
+<script src="./game.js?v=20261028phone" defer></script>
 </body>
 </html>
 
