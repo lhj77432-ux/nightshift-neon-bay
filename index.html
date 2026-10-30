@@ -216,7 +216,12 @@ html.compact-stage .car-card{min-height:72px}
   <form class="auth-card" id="authForm">
     <div class="kicker">NIGHTSHIFT / GATE</div>
     <h1>进场</h1>
+    <div class="auth-tabs">
+      <button type="button" class="on" data-gate="email">邮箱登录</button>
+      <button type="button" data-gate="guest">游客登录</button>
+    </div>
     <p id="authLead">用邮箱注册或登录。密码不改的话就是 12345678。</p>
+    <div id="authEmailPane">
     <div class="auth-tabs">
       <button type="button" class="on" data-auth="login">登录</button>
       <button type="button" data-auth="register">注册</button>
@@ -229,6 +234,10 @@ html.compact-stage .car-card{min-height:72px}
     <label for="authNew" id="authNewLabel" hidden>新密码</label>
     <input id="authNew" type="text" autocomplete="new-password" placeholder="至少 6 位" hidden>
     <button class="auth-go" type="submit" id="authGo">登录</button>
+    </div>
+    <div id="authGuestPane" hidden>
+      <button class="auth-go" type="button" data-action="guest-login">进入游戏</button>
+    </div>
     <p class="auth-msg" id="authMsg"></p>
   </form>
 </section>
@@ -380,8 +389,8 @@ html.compact-stage .car-card{min-height:72px}
 </div>
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
-<script src="./lobby.js?v=20261026room" defer></script>
-<script src="./game.js?v=20261028phone" defer></script>
+<script src="./lobby.js?v=20261030guest" defer></script>
+<script src="./game.js?v=20261030guest" defer></script>
 </body>
 </html>
 

@@ -41,12 +41,19 @@
     },
     async changePassword(oldPassword,newPassword){
       const s=this.session();if(!s)return {ok:false,error:'请先登录'};
+      if(s.guest)return {ok:false,error:'游客没有密码'};
       oldPassword=oldPassword||DEFAULT_PASSWORD;newPassword=newPassword||'';
       if(newPassword.length<6)return {ok:false,error:'新密码至少 6 位'};
       const users=loadUsers(),user=users[s.email];
       if(!user||await sha(user.salt,oldPassword)!==user.hash)return {ok:false,error:'原来的密码不对'};
       user.hash=await sha(user.salt,newPassword);saveUsers(users);
       return {ok:true};
+    },
+    guest(){
+      let name=localStorage.getItem('ns-guest-name');
+      if(!name){name='游客'+String(1000+Math.floor(Math.random()*9000));localStorage.setItem('ns-guest-name',name);}
+      localStorage.setItem('ns-session',JSON.stringify({email:name,guest:true}));
+      return {ok:true,email:name,guest:true};
     },
     logout(){localStorage.removeItem('ns-session');}
   };
