@@ -65,14 +65,20 @@ body.editing-controls .hud-widget{outline:2px dashed var(--acid);outline-offset:
 body.editing-controls.layout-locked .hud-widget{outline-color:#6a7487;cursor:not-allowed;filter:none}
 body.editing-controls .hud-widget.dragging{outline:3px solid var(--cyan);z-index:99;filter:drop-shadow(0 0 22px rgba(57,244,255,.55))}
 #screen-controls.active{display:block;pointer-events:none;background:transparent}
-.control-modal{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:min(780px,calc(100% - 20px));max-height:52vh;overflow:auto;pointer-events:auto;padding:8px 12px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(145deg,rgba(9,17,30,.97),rgba(5,8,16,.95));backdrop-filter:blur(15px);clip-path:polygon(0 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%);box-shadow:0 22px 70px #000b}
-.ctrl-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.ctrl-head h2{font-size:clamp(22px,2.8vw,32px);line-height:.9;font-style:italic;letter-spacing:-.05em;margin:2px 0 5px}.ctrl-close{min-height:42px;padding:6px 14px;border:1px solid var(--acid);background:var(--acid);color:#071016;font-weight:900;font-size:11px;pointer-events:auto}
+.control-modal{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:min(780px,calc(100% - 20px));height:min(340px,52vh);min-height:84px;max-height:74%;display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;padding:0;border:1px solid rgba(255,255,255,.18);background:linear-gradient(145deg,rgba(9,17,30,.97),rgba(5,8,16,.95));backdrop-filter:blur(15px);clip-path:polygon(0 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%);box-shadow:0 22px 70px #000b}
+.ctrl-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex:0 0 auto;padding:8px 12px 4px}.ctrl-head h2{font-size:clamp(22px,2.8vw,32px);line-height:.9;font-style:italic;letter-spacing:-.05em;margin:2px 0 5px}.ctrl-min-label{display:none;font-size:14px;letter-spacing:.08em}.ctrl-fold{min-height:36px;padding:0 10px;border:1px solid var(--cyan);color:var(--cyan);font-size:12px;font-weight:800;pointer-events:auto}.ctrl-close{min-height:42px;padding:6px 14px;border:1px solid var(--acid);background:var(--acid);color:#071016;font-weight:900;font-size:11px;pointer-events:auto}
+.ctrl-body{flex:1 1 auto;min-height:0;overflow:auto;padding:0 12px 4px}
+.ctrl-resize{flex:0 0 28px;height:28px;border:0;border-top:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#9eb0c8;font-size:12px;letter-spacing:.08em;cursor:ns-resize;touch-action:none;pointer-events:auto}
+.control-modal.is-min{height:84px!important}
+.control-modal.is-min .ctrl-body,.control-modal.is-min .kicker,.control-modal.is-min h2{display:none}
+.control-modal.is-min .ctrl-min-label{display:block}
+.control-modal.is-min .ctrl-head{align-items:center;padding:6px 10px}
 .ctrl-presets{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:5px 0}.ctrl-presets button{min-height:34px;border:1px solid rgba(255,255,255,.18);background:rgba(8,14,24,.82);pointer-events:auto;font-size:9px;color:#c5d2e5}.ctrl-presets button:hover{border-color:var(--cyan);color:#fff}
 .ctrl-settings{display:grid;grid-template-columns:1.5fr .8fr .8fr;gap:8px;align-items:center}.ctrl-enable{display:flex;flex-wrap:nowrap;gap:6px;font-size:9px;color:#aebbd0}.ctrl-enable b{display:none}.ctrl-enable label{display:flex;align-items:center;gap:3px;min-height:28px;cursor:pointer;white-space:nowrap}.ctrl-enable input{width:16px;height:16px;accent-color:var(--cyan)}
 .ctrl-slider{display:block;font-size:8px;letter-spacing:.06em;color:#8f9db5}.ctrl-slider span{display:flex;justify-content:space-between;margin-bottom:1px}.ctrl-slider b{color:var(--acid)}.ctrl-slider input{width:100%;accent-color:var(--cyan);min-height:22px}
 .ctrl-hint{margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.1);font-size:8px;letter-spacing:.06em;color:#7f90a8}
-@media(max-width:700px){.control-modal{max-height:42vh;padding:10px 12px}.ctrl-head h2{font-size:24px}.ctrl-presets button{font-size:9px;min-height:40px}.ctrl-settings{grid-template-columns:1fr 1fr}.ctrl-enable{grid-column:1/-1}.ctrl-enable label{min-height:30px}.ctrl-hint{font-size:8px}.hud-widget .steer-btn{font-size:22px}.hud-widget .steer-btn span{font-size:7px;margin-top:4px}}
-@media(max-height:430px){.control-modal{max-height:47vh}.ctrl-head .kicker{display:none}.ctrl-head h2{font-size:23px;margin:0 0 5px}.ctrl-presets{margin:4px 0}.ctrl-presets button{min-height:36px}.ctrl-settings{gap:6px}.ctrl-slider input{min-height:22px}}
+@media(max-width:700px){.control-modal{height:min(240px,46vh)}.ctrl-head h2{font-size:24px}.ctrl-presets button{font-size:9px;min-height:40px}.ctrl-settings{grid-template-columns:1fr 1fr}.ctrl-enable{grid-column:1/-1}.ctrl-enable label{min-height:30px}.ctrl-hint{font-size:8px}.hud-widget .steer-btn{font-size:22px}.hud-widget .steer-btn span{font-size:7px;margin-top:4px}}
+@media(max-height:430px){.control-modal{height:min(200px,48%)}.ctrl-head .kicker{display:none}.ctrl-head h2{font-size:23px;margin:0 0 5px}.ctrl-presets{margin:4px 0}.ctrl-presets button{min-height:36px}.ctrl-settings{gap:6px}.ctrl-slider input{min-height:22px}}
 .mobile-cam{display:none}
 #screen-pause,#screen-results{background:rgba(2,4,10,.62);backdrop-filter:blur(10px)}.modal,.result-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,calc(100% - 32px));border:1px solid var(--line);background:linear-gradient(145deg,rgba(13,19,34,.97),rgba(5,8,17,.97));padding:clamp(22px,4vw,38px);border-radius:4px;box-shadow:0 30px 100px #000c}.modal h2,.result-card h2{font-size:clamp(40px,6vw,68px);line-height:.88;font-style:italic;letter-spacing:-.06em;margin:8px 0 18px}.modal p{color:#8997b1;font-size:13px;line-height:1.65;margin:0 0 20px}.modal button,.result-card button{display:block;width:100%;min-height:52px;margin-top:8px;border:1px solid var(--line);background:#0b1220;border-radius:3px;font-weight:800;letter-spacing:.05em}.modal button:first-of-type,.result-card button:first-of-type{background:var(--acid);color:#081006;border-color:var(--acid)}
 .result-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}.result-stat{padding:11px 12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.result-stat span{display:block;font-size:9px;letter-spacing:.15em;color:#71819c}.result-stat b{display:block;font-size:18px;margin-top:2px;font-variant-numeric:tabular-nums}.reward{font-size:12px;letter-spacing:.12em;color:#8d9bb5;margin:4px 0 12px}.reward b{font-size:25px;color:var(--acid)}.note{font-size:11px;color:#7d8aa2;line-height:1.5;margin-bottom:8px}
@@ -174,7 +180,7 @@ html.compact-stage .mode-card{display:flex;flex-direction:column;justify-content
 html.compact-stage .mc-icon{grid-row:auto;width:22px;height:22px;margin:0 0 4px}
 html.compact-stage .mode-card b{font-size:14px}
 html.compact-stage .mode-card small{font-size:9px;margin-top:2px}
-html.compact-stage .ms-detail{padding:8px;min-height:0;justify-content:flex-start}
+html.compact-stage .ms-detail{padding:8px;min-height:0;justify-content:flex-start;overflow:auto}
 html.compact-stage .ms-detail h2{font-size:18px}
 html.compact-stage .ms-meta{margin-bottom:4px}
 html.compact-stage .ms-track-label{margin-bottom:3px}
@@ -184,9 +190,12 @@ html.compact-stage .track-chip b{font-size:12px}
 html.compact-stage .track-chip small{font-size:8px}
 html.compact-stage .ms-start{min-height:38px;font-size:14px;padding:0 10px}
 html.compact-stage .ms-start b{font-size:16px}
-html.compact-stage .room-box{margin-top:4px}
-html.compact-stage .room-create,html.compact-stage .room-join input,html.compact-stage .room-join button,html.compact-stage .ms-garage{min-height:32px}
-html.compact-stage .ms-garage{margin-top:4px;font-size:10px}
+html.compact-stage .room-box{margin-top:8px}
+html.compact-stage .room-create,html.compact-stage .room-join input,html.compact-stage .room-join button{min-height:48px;font-size:16px;touch-action:manipulation}
+html.compact-stage .room-join{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px}
+html.compact-stage .room-join input{min-width:0;font-size:22px;letter-spacing:.12em}
+html.compact-stage .room-join button{min-width:84px;padding:0}
+html.compact-stage .ms-garage{min-height:40px;margin-top:6px;font-size:12px}
 html.compact-stage .ms-footer{gap:4px}
 html.compact-stage #screen-menu .pill{min-height:28px;padding:3px 8px;font-size:10px}
 html.compact-stage .ms-footer .pill[data-action="ui-settings"]{display:none}
@@ -204,7 +213,7 @@ html.compact-stage .modal,html.compact-stage .result-card{padding:12px;max-heigh
 html.compact-stage .modal h2,html.compact-stage .result-card h2{font-size:28px;margin:4px 0 8px}
 html.compact-stage .modal p{margin-bottom:8px}
 html.compact-stage .modal button,html.compact-stage .result-card button{min-height:40px}
-html.compact-stage .control-modal{max-height:58%;top:4px}
+html.compact-stage .control-modal{height:min(210px,50%);max-height:68%;top:4px}
 html.compact-stage .garage-head h2{font-size:26px}
 html.compact-stage .car-card{min-height:72px}
 </style>
@@ -294,7 +303,7 @@ html.compact-stage .car-card{min-height:72px}
         <div class="ms-track-label">ROOM / 好友房间</div>
         <div id="roomIdle">
           <button class="room-create" type="button" data-action="create-room">创建房间</button>
-          <div class="room-join"><input id="roomCodeInput" inputmode="numeric" maxlength="4" placeholder="房间号"><button type="button" data-action="join-room">加入</button></div>
+          <div class="room-join"><input id="roomCodeInput" inputmode="numeric" enterkeyhint="go" maxlength="4" autocomplete="off" placeholder="房间号"><button type="button" data-action="join-room">加入</button></div>
         </div>
         <div id="roomLive" hidden>
           <b class="room-code" id="roomCode">0000</b>
@@ -349,8 +358,9 @@ html.compact-stage .car-card{min-height:72px}
   </div>
 </section>
 <section id="screen-controls" class="screen">
-  <div class="control-modal">
-    <div class="ctrl-head"><div><div class="kicker">HUD / CONTROL LAYOUT</div><h2>控制布局</h2></div><button class="ctrl-close" data-action="save-controls">保存并返回</button><span class="drag-handle">⋮⋮</span></div>
+  <div class="control-modal" id="controlModal">
+    <div class="ctrl-head"><div><div class="kicker">HUD / CONTROL LAYOUT</div><h2>控制布局</h2><b class="ctrl-min-label">控制布局</b></div><button type="button" id="btnFoldControls" class="ctrl-fold" data-action="fold-controls">收起</button><button class="ctrl-close" data-action="save-controls">保存并返回</button><span class="drag-handle">⋮⋮</span></div>
+    <div class="ctrl-body">
     <div class="ctrl-presets">
       <button data-control-preset="right">右手模式</button>
       <button data-control-preset="left">左手模式</button>
@@ -372,6 +382,8 @@ html.compact-stage .car-card{min-height:72px}
       <label class="ctrl-slider"><span>控件大小 <b id="ctrlSizeValue">100%</b></span><input id="ctrlSize" type="range" min="80" max="130" step="1" value="100"></label>
     </div>
     <div class="ctrl-hint">暂停中  拖动下方高亮按钮调整位置，松手自动保存</div>
+    </div>
+    <button type="button" id="ctrlResize" class="ctrl-resize">拖这里放大缩小</button>
   </div>
 </section>
 <section id="screen-pause" class="screen"><div class="modal"><div class="kicker">SYSTEM / PAUSED</div><h2>霓虹暂停</h2><p>比赛计时已冻结。继续驾驶，或回到车库升级你的车。</p><button data-action="resume">继续驾驶</button>
@@ -390,7 +402,7 @@ html.compact-stage .car-card{min-height:72px}
 <div id="boot"><div class="boot-title">NIGHT<span>SHIFT</span></div><div class="boot-sub">BUILDING NEON BAY...</div><div id="bootError"></div></div>
 <script src="./three.min.js"></script>
 <script src="./lobby.js?v=20261030guest" defer></script>
-<script src="./game.js?v=20261030drag" defer></script>
+<script src="./game.js?v=20261030fold" defer></script>
 </body>
 </html>
 
